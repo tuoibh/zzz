@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">My Application</string>
+    <string name="total_point_rating">/10</string>
+    <string name="txt_sample_string">Tasked with extracting a family who is at the mercy of a Georgian gangster, Tyler Rake infiltrates one of the world\'s deadliest prisons in order to save them. But when the extraction gets hot, and the gangster dies in the heat of battle, his equally ruthless brother tracks down Rake and his team to Sydney, in order to get revenge.</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="year_picker_title">Select year</string>
+</resources>
