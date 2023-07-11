@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.adapter;
 
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,17 +13,20 @@ import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.databinding.ItemCastNCrewBinding;
 import com.example.myapplication.domain.model.castncrew.CastNCrewResponse;
+import com.example.myapplication.domain.repo.ImageLoader;
 import com.example.myapplication.ui.fragment.detail.MovieDetailViewModel;
 
 public class CastNCrewAdapter extends RecyclerView.Adapter<CastNCrewAdapter.CastNCrewViewHolder> {
     CastNCrewResponse castNCrew;
     OnItemClickListener listener;
     MovieDetailViewModel viewModel;
+    ImageLoader imageLoader;
 
-    public CastNCrewAdapter(CastNCrewResponse castNCrew, MovieDetailViewModel viewModel, OnItemClickListener listener) {
+    public CastNCrewAdapter(ImageLoader imageLoader, CastNCrewResponse castNCrew, MovieDetailViewModel viewModel, OnItemClickListener listener) {
         this.castNCrew = castNCrew;
         this.listener = listener;
         this.viewModel = viewModel;
+        this.imageLoader = imageLoader;
     }
 
     @NonNull
@@ -35,9 +39,10 @@ public class CastNCrewAdapter extends RecyclerView.Adapter<CastNCrewAdapter.Cast
     @Override
     public void onBindViewHolder(@NonNull CastNCrewAdapter.CastNCrewViewHolder holder, int position) {
         holder.binding.txtCncName.setText(castNCrew.getCast().get(position).getName());
-        Glide.with(holder.binding.getRoot())
-                .load(AppConfig.Companion.BASE_IMAGE+castNCrew.getCast().get(position).getProfilePath())
-                .into(holder.binding.imvCastNCrew);
+//        Glide.with(holder.binding.getRoot())
+//                .load(AppConfig.Companion.BASE_IMAGE+castNCrew.getCast().get(position).getProfilePath())
+//                .into(holder.binding.imvCastNCrew);
+        imageLoader.loadImage(AppConfig.Companion.BASE_IMAGE+castNCrew.getCast().get(position).getProfilePath(), holder.binding.imvCastNCrew);
     }
 
     @Override

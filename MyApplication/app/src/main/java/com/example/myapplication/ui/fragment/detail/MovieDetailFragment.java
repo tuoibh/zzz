@@ -11,13 +11,17 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.databinding.FragmentMovieDetailBinding;
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
+import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.ui.activity.MainActivity;
 import com.example.myapplication.ui.adapter.CastNCrewAdapter;
+
+import java.util.List;
 
 public class MovieDetailFragment extends Fragment {
     private FragmentMovieDetailBinding binding;
@@ -30,7 +34,7 @@ public class MovieDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = (MainActivity) getActivity();
         viewModel = new ViewModelProvider(requireActivity()).get(MovieDetailViewModel.class);
-        assert getArguments() != null;
+        viewModel.getListMovieFavourite();
         args = MovieDetailFragmentArgs.fromBundle(getArguments());
     }
 
@@ -47,18 +51,20 @@ public class MovieDetailFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel.getMovieDetailRemote(args.getMovieId());
         binding.lnWaiting.setVisibility(View.VISIBLE);
-        Log.d("tbh_", "onViewCreated: MovieDetailFragment" + args.getIsFavourite());
         viewModel.mLdMovieDetail.observe(requireActivity(), movieDetailResponse -> {
             mMovieDetailResponse = movieDetailResponse;
             if(isAdded()){
                 binding.lnWaiting.setVisibility(View.GONE);
-                binding.imvIsFavourite.setChecked(args.getIsFavourite());
+                viewModel.mLdListMovieRS.observe(requireActivity(), movieResults -> {
+                    activity.setBadgeTextFavourite(movieResults.size());
+                    binding.imvIsFavourite.setChecked(viewModel.isFavourite(args.getMovieId(), movieResults));
+                });
                 setUI();
             }
         });
-        viewModel.getMovieCastNCrew(args.getMovieId());
+        viewModel.getMovieCastNCrew(args.getMovieId()+"");
         viewModel.mLdCastNCrew.observe(requireActivity(), castNCrewResponse -> {
-            CastNCrewAdapter adapter = new CastNCrewAdapter(castNCrewResponse, viewModel, (view1, position) -> {
+            CastNCrewAdapter adapter = new CastNCrewAdapter(viewModel.imageLoader, castNCrewResponse, viewModel, (view1, position) -> {
             });
             adapter.notifyDataSetChanged();
             binding.rcvCastNCrew.setAdapter(adapter);
@@ -67,7 +73,7 @@ public class MovieDetailFragment extends Fragment {
             if(binding.imvIsFavourite.isChecked()){
                 viewModel.addFavouriteMovie(args.getMovieResult());
             } else {
-                viewModel.deleteFavourite(Integer.parseInt(args.getMovieId()));
+                viewModel.deleteFavourite(args.getMovieId());
             }
         });
     }
@@ -84,6 +90,7 @@ public class MovieDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        viewModel.getListMovieFavourite();
         activity.uiToolbarDetail(args.getMovieTitle());
     }
 }

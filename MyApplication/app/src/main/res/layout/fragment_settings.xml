@@ -8,214 +8,232 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="ScrollViewSize"
-        android:background="#F8A783"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/purple_500"
-            android:orientation="vertical"><TextView
-            android:id="@+id/txt_title_filter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:textSize="18sp"
-            android:padding="10dp"
-            android:background="@color/purple_500"
-            android:paddingStart="10dp"
-            android:textStyle="bold"
-            android:text="Filter:"/>
-
-            <TextView
-                android:id="@+id/txt_title_filter_popular"
+            app:cardCornerRadius="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginTop="2dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:text="POPULAR MOVIES"/>
-
-            <TextView
-                android:id="@+id/txt_title_filter_top_rate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginTop="2dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:text="TOP RATE MOVIES"/>
-
-            <TextView
-                android:id="@+id/txt_title_filter_up_coming"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginTop="2dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:text="UP COMING MOVIES"/>
-
-            <TextView
-                android:id="@+id/txt_title_filter_now_playing"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginTop="2dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:text="NOW PLAYING MOVIES"/>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:gravity="center">
+                android:background="@color/purple_500"
+                android:elevation="8dp"
+                android:orientation="vertical">
                 <TextView
-                    android:id="@+id/txt_rate_from_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:paddingStart="10dp"
-                    android:textStyle="bold"
-                    android:text="Movies with rate from: "/>
-                <TextView
-                    android:id="@+id/txt_rate_from_text"
+                    android:id="@+id/txt_title_filter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:layout_marginTop="5dp"
+                    android:textSize="18sp"
+                    android:padding="10dp"
                     android:paddingStart="10dp"
                     android:textStyle="bold"
-                    android:text="0"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center">
+                    android:text="Filter:"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/txt_title_filter_popular"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
+                    android:background="@color/white"
                     android:padding="10dp"
-                    android:textStyle="bold"
-                    android:text="0 "/>
-                <SeekBar
-                    android:id="@+id/seekbar_movie_point"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:padding="10dp"
-                    android:textStyle="bold"
-                    android:text="10"/>
-            </TableRow>
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:padding="10dp"
-                    android:textStyle="bold"
-                    android:text="From release year: "/>
-
-                <TextView
-                    android:id="@+id/txt_year_from_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
                     android:textSize="14sp"
                     android:paddingStart="10dp"
+                    android:text="POPULAR MOVIES"/>
+
+                <TextView
+                    android:id="@+id/txt_title_filter_top_rate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:text="TOP RATE MOVIES"/>
+
+                <TextView
+                    android:id="@+id/txt_title_filter_up_coming"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:text="UP COMING MOVIES"/>
+
+                <TextView
+                    android:id="@+id/txt_title_filter_now_playing"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:text="NOW PLAYING MOVIES"/>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/txt_rate_from_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:paddingStart="10dp"
+                        android:textStyle="bold"
+                        android:text="Movies with rate from: "/>
+                    <TextView
+                        android:id="@+id/txt_rate_from_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:paddingStart="10dp"
+                        android:textStyle="bold"
+                        android:text="0"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:padding="10dp"
+                        android:textStyle="bold"
+                        android:text="0 "/>
+                    <SeekBar
+                        android:id="@+id/seekbar_movie_point"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:padding="10dp"
+                        android:textStyle="bold"
+                        android:text="10"/>
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:padding="10dp"
+                        android:textStyle="bold"
+                        android:text="From release year: "/>
+
+                    <TextView
+                        android:id="@+id/txt_year_from_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:paddingStart="10dp"
+                        android:textStyle="bold"
+                        android:text="2023"/>
+                </TableRow>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            app:cardCornerRadius="5dp"
+            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="8dp"
+                android:background="@color/purple_500"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_title_sort"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:padding="10dp"
+                    android:paddingStart="10dp"
                     android:textStyle="bold"
-                    android:text="2023"/>
-            </TableRow>
+                    android:text="Sort By:"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/txt_title_sort_release_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:text="RELEASE DATE"/>
 
-        <LinearLayout
+                <TextView
+                    android:id="@+id/txt_title_sort_rating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="2dp"
+                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:text="RATING"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@color/purple_500"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txt_title_sort"
+            app:cardCornerRadius="5dp"
+            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:padding="10dp"
+                android:elevation="8dp"
                 android:background="@color/purple_500"
-                android:paddingStart="10dp"
-                android:textStyle="bold"
-                android:text="Sort By:"/>
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txt_title_sort_release_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginTop="5dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:text="RELEASE DATE"/>
+                <TextView
+                    android:id="@+id/txt_title_num_of"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:padding="10dp"
+                    android:background="@color/purple_500"
+                    android:paddingStart="10dp"
+                    android:textStyle="bold"
+                    android:text="Number of:"/>
 
-            <TextView
-                android:id="@+id/txt_title_sort_rating"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="2dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:text="RATING"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@color/purple_500"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txt_title_num_of"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:padding="10dp"
-                android:background="@color/purple_500"
-                android:paddingStart="10dp"
-                android:textStyle="bold"
-                android:text="Number of:"/>
-
-            <TextView
-                android:id="@+id/txt_title_num_of_page"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:padding="10dp"
-                android:layout_marginTop="5dp"
-                android:textSize="14sp"
-                android:paddingStart="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="Number of pager per"/>
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/txt_title_num_of_page"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:padding="10dp"
+                    android:layout_marginTop="5dp"
+                    android:textSize="14sp"
+                    android:paddingStart="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Number of pager per loading: 1"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/txt_title_setting_loading"

@@ -1,34 +1,34 @@
 package com.example.myapplication.data.repo;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.example.myapplication.domain.repo.SettingInfoRepository;
 
 import javax.inject.Inject;
 
 public class SettingInfoRepositoryImpl implements SettingInfoRepository {
-    @Inject
     SharedPreferences sharedPreferences;
 
+    @Inject
+    public SettingInfoRepositoryImpl(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
 
     @Override
     public void insertStringSharedPreferences(String key, String value) {
-//        sharedPreferencesEditor.putString(key, value);
-//        sharedPreferencesEditor.commit();
-        sharedPreferences.edit().putString(key, value);
-        sharedPreferences.edit().commit();
+        sharedPreferences.edit().putString(key, value).apply();
     }
 
     @Override
     public void insertNumFloatSharedPreferences(String key, float value) {
-        sharedPreferences.edit().putFloat(key, value);
-        sharedPreferences.edit().commit();
+        sharedPreferences.edit().putFloat(key, value).apply();
     }
 
     @Override
     public void insertNumIntSharedPreferences(String key, int value) {
-        sharedPreferences.edit().putInt(key, value);
-        sharedPreferences.edit().commit();
+        sharedPreferences.edit().putInt(key, value).apply();
     }
 
     @Override

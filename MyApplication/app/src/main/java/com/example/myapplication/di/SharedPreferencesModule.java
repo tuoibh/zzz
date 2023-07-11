@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
+import dagger.hilt.android.internal.managers.ApplicationComponentManager;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 
@@ -24,6 +25,6 @@ public class SharedPreferencesModule {
     @Provides
     @Singleton
     public SharedPreferences getSharedPreferences(@NonNull @ApplicationContext Context context){
-        return context.getSharedPreferences("my_shared_preferences", Context.MODE_PRIVATE);
+        return context.getSharedPreferences("my_preferences", Context.MODE_PRIVATE);
     }
 }

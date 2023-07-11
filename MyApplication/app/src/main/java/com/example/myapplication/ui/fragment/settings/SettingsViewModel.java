@@ -1,6 +1,5 @@
 package com.example.myapplication.ui.fragment.settings;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -17,39 +16,43 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
+    private InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase;
+    private GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
     @Inject
     public SettingsViewModel(InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase) {
-
+        this.insertSettingsInforSharedPreferenceUseCase = insertSettingsInforSharedPreferenceUseCase;
+        this.getSettingsInforSharedPreferenceUseCase = getSettingsInforSharedPreferenceUseCase;
     }
-
-    @Inject
-    InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase;
-    @Inject
-    GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
-
-
 
     private MutableLiveData<Float> ldMoviePoint = new MutableLiveData<>(0f);
     public LiveData<Float> mLdMoviePoint = ldMoviePoint;
 
     private MutableLiveData<Integer> ldYear = new MutableLiveData<>(2023);
     public LiveData<Integer> mLdYear = ldYear;
-
-    private MutableLiveData<String> ldFilterTopic = new MutableLiveData<>();
-    public LiveData<String> mLdFilterTopic = ldFilterTopic;
-
     public void updateSettingMoviePoint(float point){
         ldMoviePoint.postValue(point);
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(300L);
+                insertSettingsInforSharedPreferenceUseCase.insertFloat(AppConfig.Companion.KEY_POINT, point);
+                Log.d("tbh_", "updateSettingMoviePoint: SettingsViewModel " + getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        thread.start();
     }
 
     public void updateSettingYear(int year){
         ldYear.postValue(year);
+        insertSettingsInforSharedPreferenceUseCase.insertInt(AppConfig.Companion.KEY_YEAR, year);
     }
 
     public void updateFilterTopic(String filterTopic){
-        ldFilterTopic.postValue(filterTopic);
         insertSettingsInforSharedPreferenceUseCase.insertString(AppConfig.Companion.KEY_TOPIC, filterTopic);
-        Log.d("tbh_", "updateFilterTopic: SettingsViewModel" + getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC));
+    }
+    public void updateSortKey(String sortKey){
+        insertSettingsInforSharedPreferenceUseCase.insertString(AppConfig.Companion.KEY_SORT, sortKey);
     }
 
 }

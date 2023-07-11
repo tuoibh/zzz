@@ -16,7 +16,11 @@
     <fragment
         android:id="@+id/aboutFragment"
         android:name="com.example.myapplication.ui.fragment.about.AboutFragment"
-        android:label="AboutFragment" />
+        android:label="AboutFragment" >
+        <action
+            android:id="@+id/action_aboutFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.myapplication.ui.fragment.settings.SettingsFragment"
@@ -35,7 +39,7 @@
         android:label="MovieDetailFragment" >
         <argument
             android:name="movieId"
-            app:argType="string" />
+            app:argType="integer" />
         <argument
             android:name="movieTitle"
             app:argType="string" />
@@ -46,4 +50,8 @@
             android:name="movieResult"
             app:argType="com.example.myapplication.domain.model.movie.MovieResult" />
     </fragment>
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.example.myapplication.ui.fragment.webview.WebViewFragment"
+        android:label="WebViewFragment" />
 </navigation>

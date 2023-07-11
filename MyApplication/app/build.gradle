@@ -43,51 +43,44 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    implementation "androidx.fragment:fragment:1.5.7"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
     def nav_version = "2.4.0-alpha10"
 
     // Java language implementation
     implementation "androidx.navigation:navigation-fragment:$nav_version"
     implementation "androidx.navigation:navigation-ui:$nav_version"
-
     // glide library
     implementation "com.github.bumptech.glide:glide:4.15.0"
-
     //Rx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.1'
-
     //retrofit
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation "com.squareup.retrofit2:adapter-rxjava3:2.9.0"
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")
-
     //gson
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation "io.reactivex.rxjava3:rxandroid:3.0.1"
 
     def room_version = "2.5.0"
-
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
-
     // optional - RxJava2 support for Room
     implementation "androidx.room:room-rxjava2:$room_version"
-
     // optional - RxJava3 support for Room
     implementation "androidx.room:room-rxjava3:$room_version"
-
     //ViewModel and livedata
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-
     //Hilt
     implementation 'com.google.dagger:hilt-android:2.33-beta'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     annotationProcessor 'com.google.dagger:hilt-android-compiler:2.33-beta'
 
     implementation 'org.modelmapper:modelmapper:3.0.0'
-    implementation "androidx.fragment:fragment:1.5.7"
 }
 hilt {
     enableAggregatingTask = true

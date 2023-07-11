@@ -2,6 +2,7 @@ package com.example.myapplication.ui.fragment.home;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +18,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.domain.model.Topic;
 import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.ui.activity.MainActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,16 +30,23 @@ public class HomeMoviesFragment extends Fragment {
     private FragmentHomeBinding binding;
     HomeViewModel viewModel;
     private MainActivity activity;
-    private boolean isLoading = false;
+    private boolean isLoadingMore = false;
     private MovieAdapter adapter;
     private int lastVisiblePosition;
     int lastVisibleItemPosition;
+    private String keySort;
+    private Topic sharedTopic;
+    private int year;
+    private float point;
+    private List<MovieResult> listLocal;
+    private List<MovieResult> listRemote = new ArrayList<>();
+    private int currentLoadPage = 1;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
         activity = (MainActivity) getActivity();
+        viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
     }
 
     @Nullable
@@ -50,27 +60,89 @@ public class HomeMoviesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.getViewModel().mTopicState.observe(requireActivity(), topic -> viewModel.getAllMovieByTopic(topic.key));
-
         viewModel.getListMovieLocal();
-        viewModel.mLdListMovieRemote.observe(getActivity(), movieResponse -> {
-            List<MovieResult> listRs = movieResponse;
-            MovieAdapter adapter = new MovieAdapter(listRs, viewModel, (view1, position) ->
-            {
-                NavDirections action = HomeMoviesFragmentDirections.actionHomeMoviesFragmentToMovieDetailFragment(listRs.get(position).getId() + "", listRs.get(position).getTitle(), viewModel.isFavouriteMovie(listRs.get(position).getId()), listRs.get(position));
-                NavHostFragment.findNavController(this).navigate(action);
-            });
-            adapter.notifyDataSetChanged();
-            binding.rcvListMovies.setItemViewCacheSize(movieResponse.size());
-            binding.rcvListMovies.setAdapter(adapter);
+
+        if (savedInstanceState != null) {
+            lastVisibleItemPosition = savedInstanceState.getInt("lastVisibleItemPosition");
+            binding.rcvListMovies.getLayoutManager().scrollToPosition(lastVisiblePosition);
+        }
+
+        // refresh
+        binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            currentLoadPage = 1;
+            new Handler().postDelayed(() -> {
+                viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
+                binding.swipeRefreshLayout.setRefreshing(false);
+            }, 1000);
+        });
+        // get list local
+        viewModel.getListMovieLocal();
+        viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {
+            listLocal = list;
+            activity.setBadgeTextFavourite(list.size());
         });
 
+        // get all info in sharedPreference
+        //topic
+        viewModel.getKeyTopicSharedPreferences();
+        viewModel.mLdFilterTopic.observe(requireActivity(), s -> {
+            if (!s.isEmpty()) {
+                activity.setUISpinner(s);
+            }
+        });
+        //year
+        viewModel.getYearSharedPreferences();
+        viewModel.mLdYear.observe(requireActivity(), integer -> year = integer);
+        //sort by
+        viewModel.getKeySortSharedPreferences();
+        viewModel.mLdSortBy.observe(requireActivity(), s -> keySort = s);
+        //point
+        viewModel.getPointSharedPreferences();
+        viewModel.mLdFilterPoint.observe(requireActivity(), aFloat ->
+            {
+                point = aFloat;
+                activity.getViewModel().mTopicState.observe(requireActivity(), topic -> {
+                    sharedTopic = topic;
+                    currentLoadPage = 1;
+                    viewModel.getAllMovieByTopic(topic.key, aFloat, keySort, year, currentLoadPage);
+                });
+            }
+        );
+        // get list remote
+        viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
+            if(isLoadingMore){
+                listRemote.addAll(movieResponse);
+                isLoadingMore = false;
+            } else{
+                listRemote.clear();
+                listRemote.addAll(movieResponse);
+            }
+            if (adapter != null) adapter.setLdListMovie(listRemote);
+            if(movieResponse.isEmpty()){
+                binding.txtNothing.setVisibility(View.VISIBLE);
+            } else {
+                binding.txtNothing.setVisibility(View.GONE);
+            }
+        });
+
+        //set adapter
+        adapter = new MovieAdapter(viewModel.imageLoader, requireContext(), listRemote, viewModel, listLocal, (view1, position) -> {
+            NavDirections action = HomeMoviesFragmentDirections.actionHomeMoviesFragmentToMovieDetailFragment(
+                    listRemote.get(position).getId(),
+                    listRemote.get(position).getTitle(),
+                    viewModel.isFavouriteMovie(listRemote.get(position).getId(),listLocal),
+                    listRemote.get(position));
+            NavHostFragment.findNavController(this).navigate(action);
+        });
+        adapter.notifyDataSetChanged();
+        binding.rcvListMovies.setItemViewCacheSize(listRemote.size());
+        binding.rcvListMovies.setAdapter(adapter);
+        // load more
         binding.rcvListMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
             }
-
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -78,29 +150,21 @@ public class HomeMoviesFragment extends Fragment {
                 lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                 int totalItemCount = layoutManager.getItemCount();
 
-                if (!isLoading && lastVisibleItemPosition == totalItemCount - 1) {
+                if (!isLoadingMore && lastVisibleItemPosition == totalItemCount - 1) {
                     // Load more data
                     loadMoreData();
                 }
             }
         });
-        if (savedInstanceState != null) {
-            lastVisibleItemPosition = savedInstanceState.getInt("lastVisibleItemPosition");
-            binding.rcvListMovies.getLayoutManager().scrollToPosition(lastVisiblePosition);
-        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void loadMoreData() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                isLoading = true;
-                //loaddata
-                Log.d("tbh_", "run: loadmore");
-                isLoading = false;
-            }
-        });
-        thread.start();
+        adapter.removeLoadingItem();
+        currentLoadPage++;
+        isLoadingMore = true;
+        viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

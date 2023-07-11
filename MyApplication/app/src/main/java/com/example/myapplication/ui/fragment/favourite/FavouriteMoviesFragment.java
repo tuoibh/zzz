@@ -22,6 +22,7 @@ public class FavouriteMoviesFragment extends Fragment {
     private FavouriteMoviesViewModel viewModel;
     private MovieFavouriteAdapter adapter;
     private MainActivity activity;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         viewModel = new ViewModelProvider(requireActivity()).get(FavouriteMoviesViewModel.class);
@@ -41,13 +42,14 @@ public class FavouriteMoviesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(isAdded()){
+        if (isAdded()) {
             binding.lnWaiting.setVisibility(View.GONE);
         }
         viewModel.mLdListMovieLocal.observe(requireActivity(), movieResults -> {
+            activity.setBadgeTextFavourite(movieResults.size());
             adapter = new MovieFavouriteAdapter(movieResults, viewModel, (view1, position) -> {
                 MovieResult rs = movieResults.get(position);
-                NavDirections action = FavouriteMoviesFragmentDirections.actionFavouriteMoviesFragmentToMovieDetailFragment(rs.getId()+"", rs.getTitle(), rs.isFavourite(), rs);
+                NavDirections action = FavouriteMoviesFragmentDirections.actionFavouriteMoviesFragmentToMovieDetailFragment(rs.getId(), rs.getTitle(), rs.isFavourite(), rs);
                 NavHostFragment.findNavController(this).navigate(action);
             });
             adapter.notifyDataSetChanged();

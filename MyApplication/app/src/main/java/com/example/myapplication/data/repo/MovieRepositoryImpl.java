@@ -37,12 +37,12 @@ public class MovieRepositoryImpl implements MovieRepository {
     }
 
     @Override
-    public Single<MovieResponse> getListMovieRemote(String topic) {
+    public Single<MovieResponse> getListMovieRemote(String topic, int num_page) {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration()
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
-        return api.getListMovie(topic, AppConfig.Companion.API_KEY, 1).map(x -> modelMapper.map(x, MovieResponse.class));
+        return api.getListMovie(topic, AppConfig.Companion.API_KEY, num_page).map(x -> modelMapper.map(x, MovieResponse.class));
     }
 
     @Override
