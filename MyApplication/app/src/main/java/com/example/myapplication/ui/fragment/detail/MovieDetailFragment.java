@@ -2,26 +2,19 @@ package com.example.myapplication.ui.fragment.detail;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.databinding.FragmentMovieDetailBinding;
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
-import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.ui.activity.MainActivity;
-import com.example.myapplication.ui.adapter.CastNCrewAdapter;
-
-import java.util.List;
 
 public class MovieDetailFragment extends Fragment {
     private FragmentMovieDetailBinding binding;

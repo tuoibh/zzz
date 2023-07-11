@@ -1,20 +1,16 @@
-package com.example.myapplication.ui.adapter;
+package com.example.myapplication.ui.fragment.detail;
 
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.myapplication.OnItemClickListener;
-import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.databinding.ItemCastNCrewBinding;
 import com.example.myapplication.domain.model.castncrew.CastNCrewResponse;
 import com.example.myapplication.domain.repo.ImageLoader;
-import com.example.myapplication.ui.fragment.detail.MovieDetailViewModel;
 
 public class CastNCrewAdapter extends RecyclerView.Adapter<CastNCrewAdapter.CastNCrewViewHolder> {
     CastNCrewResponse castNCrew;
