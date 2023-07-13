@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.OnItemClickListener;
+import com.example.myapplication.core.OnItemClickListener;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.databinding.ItemCastNCrewBinding;
 import com.example.myapplication.domain.model.castncrew.CastNCrewResponse;

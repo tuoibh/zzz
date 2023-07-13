@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.room.Room;
 
 import com.example.myapplication.data.local.dao.MovieDao;
+import com.example.myapplication.data.local.dao.UserDao;
 import com.example.myapplication.data.local.db.MovieDatabase;
 
 import javax.inject.Singleton;
@@ -26,7 +27,13 @@ public class RoomModule {
 
     @Provides
     @Singleton
-    public MovieDao provideDao(MovieDatabase movieDatabase){
+    public MovieDao provideMovieDao(MovieDatabase movieDatabase){
         return movieDatabase.movieDao();
+    }
+
+    @Provides
+    @Singleton
+    public UserDao provideUserDao(MovieDatabase movieDatabase){
+        return movieDatabase.userDao();
     }
 }

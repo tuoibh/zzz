@@ -4,18 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.OnItemClickListener;
+import com.example.myapplication.core.OnItemClickListener;
 import com.example.myapplication.databinding.ItemLoadingBinding;
 import com.example.myapplication.databinding.ItemMovieLinearBinding;
 import com.example.myapplication.domain.model.movie.MovieResult;

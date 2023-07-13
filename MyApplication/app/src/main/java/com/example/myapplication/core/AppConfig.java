@@ -15,5 +15,8 @@ public interface AppConfig {
         public static final String KEY_YEAR = "KEY_YEAR";
         public static final String KEY_RELEASE_DATE = "KEY_RELEASE_DATE";
         public static final String KEY_RATING = "KEY_RATING";
+
+        public static final String GENDER_M = "Male";
+        public static final String GENDER_F = "Female";
     }
 }

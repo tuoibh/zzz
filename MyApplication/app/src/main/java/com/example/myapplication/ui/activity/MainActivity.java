@@ -1,21 +1,18 @@
 package com.example.myapplication.ui.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -25,12 +22,14 @@ import android.widget.ArrayAdapter;
 
 import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
+import com.example.myapplication.data.repo.user.User;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.domain.model.Topic;
 import com.example.myapplication.ui.adapter.AppPagerAdapter;
 import com.example.myapplication.ui.fragment.about.AboutFragment;
 import com.example.myapplication.ui.fragment.favourite.FavouriteMoviesFragment;
 import com.example.myapplication.ui.fragment.home.HomeMoviesFragment;
+import com.example.myapplication.ui.fragment.profile.editprofile.EditProfileFragment;
 import com.example.myapplication.ui.fragment.settings.SettingsFragment;
 import com.example.myapplication.ui.fragment.settings.SettingsViewModel;
 import com.google.android.material.badge.BadgeDrawable;
@@ -72,16 +71,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        //drawer
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        binding.drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
         viewModel.createListTopic();
-        setSupportActionBar(toolbar);
         setSpinner();
-
         viewModel.getTopic();
         binding.imgBack.setOnClickListener(v -> onBackPressed());
+
+        binding.imgMenuMain.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
+        drawerClick();
+
+        setUIDrawer();
     }
 
     private void setSpinner() {
@@ -100,15 +98,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
     public void uiToolBarHome(){
         binding.imgBack.setVisibility(View.GONE);
         binding.txtTitleScreen.setVisibility(View.GONE);
-//        binding.imgMenuMain.setVisibility(View.VISIBLE);
+        binding.imgMenuMain.setVisibility(View.VISIBLE);
         binding.spinnerTopic.setVisibility(View.VISIBLE);
         binding.imvGridToolbar.setVisibility(View.VISIBLE);
         binding.imvMoreToolbar.setVisibility(View.VISIBLE);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     public void uiToolbarOtherPage(String title){
@@ -119,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.imgMenuMain.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setText(title);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     public void uiToolbarDetail(String movieTitle){
@@ -129,6 +130,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.imgBack.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setText(movieTitle);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -164,5 +167,58 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         badgeDrawable.setBackgroundColor(Color.BLACK);
         if(num >0) badgeDrawable.setVisible(true);
         else badgeDrawable.setVisible(false);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(binding.drawerLayout.isDrawerOpen(GravityCompat.START)){
+            closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void drawerClick(){
+        binding.layoutProfile.btnEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            openScreenFromDrawer(new EditProfileFragment());
+            }
+        });
+    }
+    private void openScreenFromDrawer(Fragment fragment){
+        androidx.fragment.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container_view, fragment)
+                .addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
+    public void settingUIScreenFromDrawer(String title, boolean isToolbarOff){
+        closeDrawer();
+        binding.spinnerTopic.setVisibility(View.GONE);
+        binding.imvGridToolbar.setVisibility(View.GONE);
+        binding.imvMoreToolbar.setVisibility(View.GONE);
+        binding.imgMenuMain.setVisibility(View.GONE);
+        binding.imgBack.setVisibility(View.VISIBLE);
+        binding.txtTitleScreen.setVisibility(View.VISIBLE);
+        binding.txtTitleScreen.setText(title);
+        binding.bottomNavigationView.setVisibility(View.GONE);
+        if(isToolbarOff) binding.toolbar.setVisibility(View.GONE);
+    }
+
+    private void closeDrawer(){
+        binding.drawerLayout.close();
+    }
+
+    public void setUIDrawer(User user){
+        binding.layoutProfile.imvUserImage.setImageURI(user.getUri());
+        binding.layoutProfile.txtUserFullname.setText(user.getName());
+        binding.layoutProfile.txtUserMail.setText(user.getEmail());
+        binding.layoutProfile.txtUserDob.setText(user.getDate_of_birth());
+        binding.layoutProfile.txtUserGender.setText(user.getGender());
+    }
+
+    public void setUIDrawer(){
+        setUIDrawer(viewModel.getUser(getPackageName()));
     }
 }

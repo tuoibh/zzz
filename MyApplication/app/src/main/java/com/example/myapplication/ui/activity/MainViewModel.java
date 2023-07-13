@@ -1,14 +1,18 @@
 package com.example.myapplication.ui.activity;
 
-import android.content.SharedPreferences;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
+import com.example.myapplication.data.repo.user.User;
 import com.example.myapplication.domain.model.Topic;
 import com.example.myapplication.domain.usecase.GetSettingsInforSharedPreferenceUseCase;
+import com.example.myapplication.domain.usecase.GetUserInfoUseCase;
 import com.example.myapplication.domain.usecase.InsertSettingsInforSharedPreferenceUseCase;
 
 import java.util.ArrayList;
@@ -22,13 +26,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 public class MainViewModel extends ViewModel {
     private final InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase;
     private final GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
+    private final GetUserInfoUseCase getUserInfoUseCase;
 
     List<Topic> listTopic = new ArrayList<Topic>();
 
     @Inject
-    public MainViewModel(InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase) {
+    public MainViewModel(InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase, GetUserInfoUseCase getUserInfoUseCase) {
         this.insertSettingsInforSharedPreferenceUseCase = insertSettingsInforSharedPreferenceUseCase;
         this.getSettingsInforSharedPreferenceUseCase = getSettingsInforSharedPreferenceUseCase;
+        this.getUserInfoUseCase = getUserInfoUseCase;
     }
 
     private final MutableLiveData<Topic> topicState = new MutableLiveData<>();
@@ -57,4 +63,10 @@ public class MainViewModel extends ViewModel {
         listTopic.add(new Topic(AppConfig.Companion.NOW_PLAYING, "NOW PLAYING"));
     }
 
+    public User getUser(String packageName){
+        User userGet = getUserInfoUseCase.getUserInfo();
+        if (userGet != null) return userGet;
+        return new User(1, "User name", "Email", "YYYY/MM/DD", "None",
+                Uri.parse("android.resource://" + packageName + "/" + R.drawable.ic_default_avatar));
+    }
 }

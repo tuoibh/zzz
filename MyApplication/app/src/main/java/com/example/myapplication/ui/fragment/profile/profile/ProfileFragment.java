@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.profile;
+package com.example.myapplication.ui.fragment.profile.profile;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,21 +1,17 @@
 package com.example.myapplication.ui.fragment.favourite;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.OnItemClickListener;
+import com.example.myapplication.core.OnItemClickListener;
 import com.example.myapplication.R;
-import com.example.myapplication.databinding.ItemLoadingBinding;
 import com.example.myapplication.databinding.ItemMovieLinearBinding;
 import com.example.myapplication.domain.model.movie.MovieResult;
-import com.example.myapplication.ui.fragment.home.HomeViewModel;
 
 import java.util.List;
 

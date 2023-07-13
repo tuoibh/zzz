@@ -81,6 +81,9 @@ dependencies {
     annotationProcessor 'com.google.dagger:hilt-android-compiler:2.33-beta'
 
     implementation 'org.modelmapper:modelmapper:3.0.0'
+
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
+
 }
 hilt {
     enableAggregatingTask = true
