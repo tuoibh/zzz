@@ -1,14 +1,21 @@
 package com.example.myapplication.ui.fragment.detail;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -16,12 +23,18 @@ import com.example.myapplication.databinding.FragmentMovieDetailBinding;
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.ui.activity.MainActivity;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class MovieDetailFragment extends Fragment {
     private FragmentMovieDetailBinding binding;
     private MainActivity activity;
     MovieDetailViewModel viewModel;
     MovieDetailResponse mMovieDetailResponse;
     MovieDetailFragmentArgs args;
+
+    private int hour;
+    private int minutes;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,15 +82,38 @@ public class MovieDetailFragment extends Fragment {
                 viewModel.deleteFavourite(args.getMovieId());
             }
         });
+        binding.txtReminderDate.setOnClickListener(v -> openDateDialog());
+        binding.txtReminderTime.setOnClickListener(v -> openTimeDialog());
+        binding.btnReminderMovie.setOnClickListener(v -> {
+            if(isPossibleToReminder(binding.txtReminderDate.getText().toString(), binding.txtReminderTime.getText().toString())){
+                viewModel.addReminder(mMovieDetailResponse, binding.txtReminderDate.getText().toString(), binding.txtReminderTime.getText().toString());
+                activity.getViewModel().getListReminder();
+                Toast.makeText(activity, "Add reminder successfully", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("NewApi")
+    private boolean isPossibleToReminder(String date, String time) {
+        if(date.compareTo(viewModel.getCurrentDate())<0){
+            Toast.makeText(activity, "Invalid Date", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if(date.compareTo(viewModel.getCurrentDate())==0){
+            if(time.compareTo(viewModel.getCurrentTime()) <= 0){
+                Toast.makeText(activity, "Invalid Time", Toast.LENGTH_SHORT).show();
+                return false;
+            } else return true;
+        } else return true;
+    }
+
+    @SuppressLint({"SetTextI18n", "NewApi"})
     private void setUI() {
         binding.txtReleaseDateText.setText(mMovieDetailResponse.getReleaseDate());
         binding.txtRatingText.setText(mMovieDetailResponse.getVoteAverage()+ "/10");
         Glide.with(this).load(mMovieDetailResponse.getPosterPath()).into(binding.imvPosterMovie);
         binding.txtOveriewText.setText(mMovieDetailResponse.getOverview());
-        binding.txtReminderDate.setText(mMovieDetailResponse.getReleaseDate());
+        binding.txtReminderDate.setText(viewModel.getCurrentDate());
+        binding.txtReminderTime.setText(viewModel.getCurrentTime());
     }
 
     @Override
@@ -85,5 +121,22 @@ public class MovieDetailFragment extends Fragment {
         super.onResume();
         viewModel.getListMovieFavourite();
         activity.uiToolbarDetail(args.getMovieTitle());
+    }
+    @SuppressLint("SetTextI18n")
+    private void openDateDialog(){
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+            binding.txtReminderDate.setText(year + "-" + (month+1) + "-" + dayOfMonth);
+        }, viewModel.calendar.get(Calendar.YEAR),  viewModel.calendar.get(Calendar.MONTH),  viewModel.calendar.get(Calendar.DATE));
+        dialog.show();
+    }
+    private void openTimeDialog(){
+        @SuppressLint("SetTextI18n") TimePickerDialog dialog = new TimePickerDialog(requireContext(), (view, hourOfDay, minute) -> {
+            hour = hourOfDay;
+            minutes = minute;
+            String _hour = hourOfDay<10? ("0"+hourOfDay) : (hourOfDay+"");
+            String _minutes = minute<10? ("0"+minutes) : (minutes+"");
+            binding.txtReminderTime.setText(_hour+":"+_minutes);
+        }, hour, minutes, true);
+        dialog.show();
     }
 }

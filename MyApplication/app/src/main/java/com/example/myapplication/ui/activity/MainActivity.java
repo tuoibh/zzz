@@ -4,15 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
-import android.app.FragmentTransaction;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -21,8 +22,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.example.myapplication.R;
-import com.example.myapplication.core.AppConfig;
-import com.example.myapplication.data.repo.user.User;
+import com.example.myapplication.domain.model.reminder.Reminder;
+import com.example.myapplication.domain.model.user.User;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.domain.model.Topic;
 import com.example.myapplication.ui.adapter.AppPagerAdapter;
@@ -30,12 +31,9 @@ import com.example.myapplication.ui.fragment.about.AboutFragment;
 import com.example.myapplication.ui.fragment.favourite.FavouriteMoviesFragment;
 import com.example.myapplication.ui.fragment.home.HomeMoviesFragment;
 import com.example.myapplication.ui.fragment.profile.editprofile.EditProfileFragment;
+import com.example.myapplication.ui.fragment.reminder.AllReminderFragment;
 import com.example.myapplication.ui.fragment.settings.SettingsFragment;
-import com.example.myapplication.ui.fragment.settings.SettingsViewModel;
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView;
-import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private MainViewModel viewModel;
     private ArrayAdapter<Topic> adapter;
     private List<Fragment> listFragment = new ArrayList<>();
+    private DrawerReminderAdapter reminderAdapter;
 
     @SuppressLint("CommitPrefEdits")
     @Override
@@ -64,21 +63,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 //        FragmentManager fragmentManager = binding.viewPager.get();
 //        setViewPager();
         //nav controller
-
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
         navController = navHostFragment.getNavController();
-
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
+        //nav viewpager
+//        setViewPager();
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
         viewModel.createListTopic();
         setSpinner();
         viewModel.getTopic();
         binding.imgBack.setOnClickListener(v -> onBackPressed());
-
         binding.imgMenuMain.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
         drawerClick();
-
         setUIDrawer();
     }
 
@@ -147,9 +143,51 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void setViewPager(){
+    private void setViewPager()
+    {
         setListFragment();
-//        binding.viewPager.setAdapter(new AppPagerAdapter(this, listFragment));
+        binding.viewPager.setAdapter(new AppPagerAdapter(this, listFragment));
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
+        navController = navHostFragment.getNavController();
+        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
+        Navigation.setViewNavController(binding.viewPager, navController);
+        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                switch (position){
+                    case 0:
+                        binding.bottomNavigationView.setSelectedItemId(R.id.homeMoviesFragment);
+                        break;
+                    case 1:
+                        binding.bottomNavigationView.setSelectedItemId(R.id.favouriteMoviesFragment);
+                        break;
+                    case 2:
+                        binding.bottomNavigationView.setSelectedItemId(R.id.settingsFragment);
+                        break;
+                    case 3:
+                        binding.bottomNavigationView.setSelectedItemId(R.id.aboutFragment);
+                }
+            }
+        });
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()){
+                case R.id.homeMoviesFragment:
+                    binding.viewPager.setCurrentItem(0);
+                    break;
+                case R.id.favouriteMoviesFragment:
+                    binding.viewPager.setCurrentItem(1);
+                    break;
+                case R.id.settingsFragment:
+                    binding.viewPager.setCurrentItem(2);
+                    break;
+                case R.id.aboutFragment:
+                    binding.viewPager.setCurrentItem(3);
+                    break;
+            }
+            return true;
+        });
     }
 
     private void setListFragment() {
@@ -179,14 +217,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void drawerClick(){
-        binding.layoutProfile.btnEditProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            openScreenFromDrawer(new EditProfileFragment());
-            }
-        });
+        binding.layoutProfile.btnEditProfile.setOnClickListener(v -> openScreenFromDrawer(new EditProfileFragment()));
+        binding.layoutProfile.btnShowAll.setOnClickListener(v -> openScreenFromDrawer(new AllReminderFragment()));
     }
     private void openScreenFromDrawer(Fragment fragment){
+        closeDrawer();
         androidx.fragment.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container_view, fragment)
                 .addToBackStack(null);
@@ -220,5 +255,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void setUIDrawer(){
         setUIDrawer(viewModel.getUser(getPackageName()));
+        setRcvReminder();
+    }
+
+    private void setRcvReminder() {
+        viewModel.getListReminder();
+        List<Reminder> reminderList  = new ArrayList<>();
+        viewModel.mLdReminder.observe(this, reminders -> {
+            reminderList.addAll(reminders);
+            if(reminders.isEmpty()) binding.layoutProfile.txtReminderEmpty.setVisibility(View.VISIBLE);
+            else binding.layoutProfile.txtReminderEmpty.setVisibility(View.GONE);
+            if(reminderAdapter != null) reminderAdapter.setLdListMovie(reminders);
+        });
+        reminderAdapter = new DrawerReminderAdapter(reminderList);
+        binding.layoutProfile.rcvReminder.setAdapter(reminderAdapter);
+        adapter.notifyDataSetChanged();
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.room.Room;
 
 import com.example.myapplication.data.local.dao.MovieDao;
+import com.example.myapplication.data.local.dao.ReminderDao;
 import com.example.myapplication.data.local.dao.UserDao;
 import com.example.myapplication.data.local.db.MovieDatabase;
 
@@ -36,4 +37,8 @@ public class RoomModule {
     public UserDao provideUserDao(MovieDatabase movieDatabase){
         return movieDatabase.userDao();
     }
+
+    @Provides
+    @Singleton
+    public ReminderDao provideReminderDao(MovieDatabase movieDatabase){ return movieDatabase.reminderDao();}
 }

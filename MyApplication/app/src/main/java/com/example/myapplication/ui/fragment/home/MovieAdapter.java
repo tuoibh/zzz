@@ -53,8 +53,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.listMovie = listMovie;
         notifyDataSetChanged();
     }
-
-    private Observer<List<MovieResult>> mObserver = resultList -> notifyDataSetChanged();
+//    private Observer<List<MovieResult>> mObserver = resultList -> notifyDataSetChanged();
 
     @Override
     public int getItemViewType(int position) {

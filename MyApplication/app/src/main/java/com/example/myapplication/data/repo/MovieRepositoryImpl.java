@@ -25,9 +25,7 @@ import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Single;
 
 public class MovieRepositoryImpl implements MovieRepository {
-    @Inject
     MovieApi api;
-    @Inject
     MovieDao movieDao;
 
     @Inject

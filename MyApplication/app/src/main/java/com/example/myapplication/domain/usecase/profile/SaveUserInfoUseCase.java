@@ -1,7 +1,7 @@
-package com.example.myapplication.domain.usecase;
+package com.example.myapplication.domain.usecase.profile;
 
 import com.example.myapplication.domain.repo.UserInfoRepository;
-import com.example.myapplication.data.repo.user.User;
+import com.example.myapplication.domain.model.user.User;
 
 import javax.inject.Inject;
 

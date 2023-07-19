@@ -1,4 +1,4 @@
-package com.example.myapplication.data.repo.user;
+package com.example.myapplication.domain.model.user;
 
 import android.net.Uri;
 

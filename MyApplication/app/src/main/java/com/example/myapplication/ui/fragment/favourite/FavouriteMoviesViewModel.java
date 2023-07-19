@@ -1,14 +1,12 @@
 package com.example.myapplication.ui.fragment.favourite;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.domain.model.movie.MovieResult;
-import com.example.myapplication.domain.usecase.DeleteMovieInLocalUseCase;
-import com.example.myapplication.domain.usecase.GetListMoviesUseCase;
+import com.example.myapplication.domain.usecase.movielocal.DeleteMovieInLocalUseCase;
+import com.example.myapplication.domain.usecase.listmovie.GetListMoviesUseCase;
 
 import java.util.List;
 

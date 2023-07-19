@@ -1,4 +1,4 @@
-package com.example.myapplication.domain.usecase;
+package com.example.myapplication.domain.usecase.detailmovie;
 
 import com.example.myapplication.domain.model.castncrew.CastNCrewResponse;
 import com.example.myapplication.domain.repo.MovieRepository;

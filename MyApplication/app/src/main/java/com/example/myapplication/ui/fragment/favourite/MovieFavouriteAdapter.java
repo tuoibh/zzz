@@ -28,12 +28,6 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
         this.viewModel = viewModel;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    public MovieFavouriteAdapter(List<MovieResult> listMovie) {
-        this.listMovie = listMovie;
-        notifyDataSetChanged();
-    }
-
     @NonNull
     @Override
     public MovieFavouriteAdapter.MovieHolderItem onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

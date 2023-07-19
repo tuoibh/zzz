@@ -1,14 +1,13 @@
 package com.example.myapplication.ui.fragment.profile.editprofile;
 
 import android.net.Uri;
-import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.R;
-import com.example.myapplication.domain.usecase.GetUserInfoUseCase;
-import com.example.myapplication.domain.usecase.SaveUserInfoUseCase;
-import com.example.myapplication.data.repo.user.User;
+import com.example.myapplication.domain.usecase.profile.GetUserInfoUseCase;
+import com.example.myapplication.domain.usecase.profile.SaveUserInfoUseCase;
+import com.example.myapplication.domain.model.user.User;
 
 import javax.inject.Inject;
 

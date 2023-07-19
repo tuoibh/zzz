@@ -1,4 +1,4 @@
-package com.example.myapplication.domain.usecase;
+package com.example.myapplication.domain.usecase.setting;
 
 import com.example.myapplication.domain.repo.SettingInfoRepository;
 

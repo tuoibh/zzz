@@ -1,7 +1,9 @@
 package com.example.myapplication.ui.fragment.detail;
 
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -9,15 +11,22 @@ import androidx.lifecycle.ViewModel;
 import com.example.myapplication.domain.model.castncrew.CastNCrewResponse;
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.domain.model.movie.MovieResult;
+import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.repo.ImageLoader;
-import com.example.myapplication.domain.usecase.DeleteMovieInLocalUseCase;
-import com.example.myapplication.domain.usecase.GetCastNCrewMovieUseCase;
-import com.example.myapplication.domain.usecase.GetListMoviesUseCase;
-import com.example.myapplication.domain.usecase.GetMovieDetailUseCase;
-import com.example.myapplication.domain.usecase.InsertMovieToLocalUseCase;
+import com.example.myapplication.domain.usecase.movielocal.DeleteMovieInLocalUseCase;
+import com.example.myapplication.domain.usecase.detailmovie.GetCastNCrewMovieUseCase;
+import com.example.myapplication.domain.usecase.listmovie.GetListMoviesUseCase;
+import com.example.myapplication.domain.usecase.detailmovie.GetMovieDetailUseCase;
+import com.example.myapplication.domain.usecase.movielocal.InsertMovieToLocalUseCase;
+import com.example.myapplication.domain.usecase.reminder.GetListReminderUseCase;
+import com.example.myapplication.domain.usecase.reminder.InsertReminderUseCase;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
 
 import javax.inject.Inject;
 
@@ -34,16 +43,22 @@ public class MovieDetailViewModel extends ViewModel {
     public LiveData<MovieDetailResponse> mLdMovieDetail = ldMovieDetail;
     private MutableLiveData<CastNCrewResponse> ldCastNCrew = new MutableLiveData<>();
     public LiveData<CastNCrewResponse> mLdCastNCrew = ldCastNCrew;
-
+    private MutableLiveData<List<Reminder>> ldReminderList = new MutableLiveData<>();
+    public LiveData<List<Reminder>> mLdReminderList = ldReminderList;
     private MutableLiveData<List<MovieResult>> ldListMovieRS = new MutableLiveData<>();
     public LiveData<List<MovieResult>> mLdListMovieRS = ldListMovieRS;
+    private MutableLiveData<Boolean> ldIsReminded = new MutableLiveData<>(false);
+    public LiveData<Boolean> mLdReminded = ldIsReminded;
     private GetMovieDetailUseCase getMovieDetailUseCase;
     private GetCastNCrewMovieUseCase getCastNCrewMovieUseCase;
     private InsertMovieToLocalUseCase insertMovieToLocalUseCase;
     private DeleteMovieInLocalUseCase deleteMovieInLocalUseCase;
     private GetListMoviesUseCase getListMoviesUseCase;
-
+    private InsertReminderUseCase insertReminderUseCase;
+    private GetListReminderUseCase getListReminderUseCase;
     ImageLoader imageLoader;
+
+    Calendar calendar = Calendar.getInstance();
 
     @Inject
     public MovieDetailViewModel(GetMovieDetailUseCase getMovieDetailUseCase,
@@ -51,12 +66,14 @@ public class MovieDetailViewModel extends ViewModel {
                                 InsertMovieToLocalUseCase insertMovieToLocalUseCase,
                                 DeleteMovieInLocalUseCase deleteMovieInLocalUseCase,
                                 GetListMoviesUseCase getListMoviesUseCase,
-                                ImageLoader imageLoader) {
+                                InsertReminderUseCase insertReminderUseCase, GetListReminderUseCase getListReminderUseCase, ImageLoader imageLoader) {
         this.getMovieDetailUseCase = getMovieDetailUseCase;
         this.getCastNCrewMovieUseCase = getCastNCrewMovieUseCase;
         this.insertMovieToLocalUseCase = insertMovieToLocalUseCase;
         this.deleteMovieInLocalUseCase = deleteMovieInLocalUseCase;
         this.getListMoviesUseCase = getListMoviesUseCase;
+        this.insertReminderUseCase = insertReminderUseCase;
+        this.getListReminderUseCase = getListReminderUseCase;
         this.imageLoader = imageLoader;
     }
 
@@ -136,5 +153,24 @@ public class MovieDetailViewModel extends ViewModel {
             if(item.getId() == movieId) return true;
         }
         return false;
+    }
+    public String getCurrentDate(){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(calendar.getTime());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String getCurrentTime(){
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return timeFormat.format(calendar.getTime());
+    }
+
+    public void addReminder(MovieDetailResponse movieDetailResponse, String dateReminder, String timeReminder){
+        Reminder reminder = new Reminder(movieDetailResponse.getId(),
+                movieDetailResponse.getTitle(),
+                movieDetailResponse.getPosterPath(),
+                movieDetailResponse.getVoteAverage().toString(),
+                dateReminder, timeReminder);
+        insertReminderUseCase.addReminder(reminder);
     }
 }

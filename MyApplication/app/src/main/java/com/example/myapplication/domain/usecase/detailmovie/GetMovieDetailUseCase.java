@@ -1,4 +1,4 @@
-package com.example.myapplication.domain.usecase;
+package com.example.myapplication.domain.usecase.detailmovie;
 
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.domain.repo.MovieRepository;

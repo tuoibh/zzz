@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.core.AppConfig;
-import com.example.myapplication.domain.usecase.GetSettingsInforSharedPreferenceUseCase;
-import com.example.myapplication.domain.usecase.InsertSettingsInforSharedPreferenceUseCase;
+import com.example.myapplication.domain.usecase.setting.GetSettingsInforSharedPreferenceUseCase;
+import com.example.myapplication.domain.usecase.setting.InsertSettingsInforSharedPreferenceUseCase;
 
 import javax.inject.Inject;
 

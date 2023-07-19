@@ -1,7 +1,5 @@
 package com.example.myapplication.ui.fragment.home;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -11,11 +9,11 @@ import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.domain.model.movie.MovieResponse;
 import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.domain.repo.ImageLoader;
-import com.example.myapplication.domain.usecase.DeleteMovieInLocalUseCase;
-import com.example.myapplication.domain.usecase.GetListMoviesUseCase;
-import com.example.myapplication.domain.usecase.GetMovieDetailUseCase;
-import com.example.myapplication.domain.usecase.GetSettingsInforSharedPreferenceUseCase;
-import com.example.myapplication.domain.usecase.InsertMovieToLocalUseCase;
+import com.example.myapplication.domain.usecase.movielocal.DeleteMovieInLocalUseCase;
+import com.example.myapplication.domain.usecase.listmovie.GetListMoviesUseCase;
+import com.example.myapplication.domain.usecase.detailmovie.GetMovieDetailUseCase;
+import com.example.myapplication.domain.usecase.setting.GetSettingsInforSharedPreferenceUseCase;
+import com.example.myapplication.domain.usecase.movielocal.InsertMovieToLocalUseCase;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-package com.example.myapplication.domain.usecase;
+package com.example.myapplication.domain.usecase.movielocal;
 
 import com.example.myapplication.domain.repo.MovieRepository;
 

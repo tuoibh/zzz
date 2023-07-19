@@ -1,4 +1,4 @@
-package com.example.myapplication.domain.usecase;
+package com.example.myapplication.domain.usecase.listmovie;
 
 import android.util.Log;
 

@@ -3,7 +3,7 @@ package com.example.myapplication.data.repo;
 import com.example.myapplication.data.local.dao.UserDao;
 import com.example.myapplication.data.model.user.Users;
 import com.example.myapplication.domain.repo.UserInfoRepository;
-import com.example.myapplication.data.repo.user.User;
+import com.example.myapplication.domain.model.user.User;
 
 import org.modelmapper.ModelMapper;
 

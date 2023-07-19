@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,9 +18,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.databinding.FragmentEditProfileBinding;
-import com.example.myapplication.data.repo.user.User;
+import com.example.myapplication.domain.model.user.User;
 import com.example.myapplication.ui.activity.MainActivity;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 
@@ -51,6 +51,7 @@ public class EditProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setUI();
+        uri = Uri.parse("android.resource://" + activity.getPackageName() + "/" + R.drawable.ic_default_avatar);
         binding.btnCancel.setOnClickListener(v -> activity.onBackPressed());
         binding.imvAvatar.setOnClickListener(v -> chooseImageAvatar());
         binding.txtDateOfBirth.setOnClickListener(v -> openDateDialog());
