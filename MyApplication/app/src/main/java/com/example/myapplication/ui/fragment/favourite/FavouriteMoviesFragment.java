@@ -61,5 +61,6 @@ public class FavouriteMoviesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         activity.uiToolbarOtherPage("Favorite");
+        viewModel.getListFavouriteMovie();
     }
 }

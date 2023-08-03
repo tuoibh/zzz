@@ -15,8 +15,13 @@ public interface AppConfig {
         public static final String KEY_YEAR = "KEY_YEAR";
         public static final String KEY_RELEASE_DATE = "KEY_RELEASE_DATE";
         public static final String KEY_RATING = "KEY_RATING";
-
         public static final String GENDER_M = "Male";
         public static final String GENDER_F = "Female";
+        public static final String ACTION_NOTI  = "ACTION_NOTI";
+        public static final String CHANNEL_ID  = "CHANNEL_ID";
+        public static final String NOTIFICATION_ID_MOVIE  = "NOTIFICATION_ID_MOVIE";
+        public static final String NOTIFICATION_TITLE_MOVIE  = "NOTIFICATION_TITLE_MOVIE";
+        public static final String NOTIFICATION_URL_POSTER_MOVIE  = "NOTIFICATION_URL_POSTER_MOVIE";
+        public static final String NOTIFICATION_VOTE_AVERAGE_MOVIE = "NOTIFICATION_RELEASE_DATE_MOVIE";
     }
 }

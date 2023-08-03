@@ -21,9 +21,11 @@ import com.example.myapplication.domain.usecase.movielocal.InsertMovieToLocalUse
 import com.example.myapplication.domain.usecase.reminder.GetListReminderUseCase;
 import com.example.myapplication.domain.usecase.reminder.InsertReminderUseCase;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
@@ -165,12 +167,7 @@ public class MovieDetailViewModel extends ViewModel {
         return timeFormat.format(calendar.getTime());
     }
 
-    public void addReminder(MovieDetailResponse movieDetailResponse, String dateReminder, String timeReminder){
-        Reminder reminder = new Reminder(movieDetailResponse.getId(),
-                movieDetailResponse.getTitle(),
-                movieDetailResponse.getPosterPath(),
-                movieDetailResponse.getVoteAverage().toString(),
-                dateReminder, timeReminder);
+    public void addReminder(Reminder reminder){
         insertReminderUseCase.addReminder(reminder);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.activity;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -10,7 +11,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.model.user.User;
-import com.example.myapplication.domain.model.Topic;
+import com.example.myapplication.domain.model.movie.Topic;
 import com.example.myapplication.domain.usecase.reminder.GetListReminderUseCase;
 import com.example.myapplication.domain.usecase.setting.GetSettingsInforSharedPreferenceUseCase;
 import com.example.myapplication.domain.usecase.profile.GetUserInfoUseCase;

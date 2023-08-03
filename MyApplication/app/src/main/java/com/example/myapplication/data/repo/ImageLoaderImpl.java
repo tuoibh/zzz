@@ -1,6 +1,8 @@
 package com.example.myapplication.data.repo;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -11,11 +13,15 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.myapplication.R;
 import com.example.myapplication.domain.repo.ImageLoader;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
+import retrofit2.http.Url;
 
 public class ImageLoaderImpl implements ImageLoader {
 
@@ -30,8 +36,20 @@ public class ImageLoaderImpl implements ImageLoader {
     public void loadImage(String url, ImageView imageView) {
         RequestOptions requestOptions = new RequestOptions().priority(Priority.HIGH)
                 .placeholder(R.drawable.ic_splash_app)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .skipMemoryCache(true);
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(context).load(url).apply(requestOptions).into(imageView);
+    }
+
+    @Override
+    public Bitmap getBitmap(String imageUrl) {
+        Bitmap bm;
+        try {
+            URL url = new URL(imageUrl);
+            bm = Glide.with(context).asBitmap().load(url).submit().get();
+        } catch (ExecutionException | InterruptedException | MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        Log.d("tbh_", "getBitmap: ImageLoaderImpl "+bm);
+        return bm;
     }
 }

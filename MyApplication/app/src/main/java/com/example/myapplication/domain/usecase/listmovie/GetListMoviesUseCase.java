@@ -22,7 +22,6 @@ public class GetListMoviesUseCase {
     }
 
     public Single<MovieResponse> getAllMoviesByTopic(String topic, int num_page){
-        Log.d("tbh", "getAllMoviesByTopic: ");
         return movieRepository.getListMovieRemote(topic, num_page);
     }
 

@@ -12,13 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.myapplication.databinding.FragmentHomeBinding;
-import com.example.myapplication.domain.model.Topic;
+import com.example.myapplication.domain.model.movie.Topic;
 import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.ui.activity.MainActivity;
 
@@ -31,8 +33,8 @@ public class HomeMoviesFragment extends Fragment {
     HomeViewModel viewModel;
     private MainActivity activity;
     private boolean isLoadingMore = false;
+    private boolean isRefresh = true;
     private MovieAdapter adapter;
-    private int lastVisiblePosition;
     int lastVisibleItemPosition;
     private String keySort;
     private Topic sharedTopic;
@@ -47,8 +49,8 @@ public class HomeMoviesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = (MainActivity) getActivity();
         viewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+        getListMovieRemote();
     }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -62,19 +64,61 @@ public class HomeMoviesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel.getListMovieLocal();
 
-        if (savedInstanceState != null) {
-            lastVisibleItemPosition = savedInstanceState.getInt("lastVisibleItemPosition");
-            binding.rcvListMovies.getLayoutManager().scrollToPosition(lastVisiblePosition);
-        }
-
         // refresh
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
+            isRefresh = true;
             currentLoadPage = 1;
+//            viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
             new Handler().postDelayed(() -> {
-                viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
+                listRemote.clear();
+                getListMovieRemote();
                 binding.swipeRefreshLayout.setRefreshing(false);
             }, 1000);
         });
+        //set adapter
+        adapter = new MovieAdapter(viewModel.imageLoader, requireContext(), listRemote, viewModel, listLocal, (view1, position) -> {
+            NavDirections action = HomeMoviesFragmentDirections.actionHomeMoviesFragmentToMovieDetailFragment(
+                    listRemote.get(position).getId(),
+                    listRemote.get(position).getTitle(),
+                    viewModel.isFavouriteMovie(listRemote.get(position).getId(),listLocal),
+                    listRemote.get(position));
+            NavHostFragment.findNavController(this).navigate(action);
+
+        });
+        adapter.notifyDataSetChanged();
+        binding.rcvListMovies.setItemViewCacheSize(listRemote.size());
+        binding.rcvListMovies.setAdapter(adapter);
+        // load more
+        binding.rcvListMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                binding.rcvListMovies.post(() -> {
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                    lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                    int totalItemCount = layoutManager.getItemCount();
+                    if (!isLoadingMore && lastVisibleItemPosition == totalItemCount - 1) {
+                        loadMoreData();
+                    }
+                });
+            }
+        });
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void loadMoreData() {
+        adapter.removeLoadingItem();
+        currentLoadPage++;
+        isLoadingMore = true;
+        viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void getListMovieRemote(){
         // get list local
         viewModel.getListMovieLocal();
         viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {
@@ -96,7 +140,7 @@ public class HomeMoviesFragment extends Fragment {
         //sort by
         viewModel.getKeySortSharedPreferences();
         viewModel.mLdSortBy.observe(requireActivity(), s -> keySort = s);
-        //point
+        //point & get local
         viewModel.getPointSharedPreferences();
         viewModel.mLdFilterPoint.observe(requireActivity(), aFloat ->
             {
@@ -110,7 +154,7 @@ public class HomeMoviesFragment extends Fragment {
         );
         // get list remote
         viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
-            if(isLoadingMore){
+            /*if(isLoadingMore){
                 listRemote.addAll(movieResponse);
                 isLoadingMore = false;
             } else{
@@ -122,51 +166,23 @@ public class HomeMoviesFragment extends Fragment {
                 binding.txtNothing.setVisibility(View.VISIBLE);
             } else {
                 binding.txtNothing.setVisibility(View.GONE);
+            }*/
+            if (isRefresh) {
+                listRemote.clear();
+                listRemote.addAll(movieResponse);
+                isRefresh = false;
+            } else if (isLoadingMore) {
+                listRemote.addAll(movieResponse);
+                isLoadingMore = false;
             }
-        });
-
-        //set adapter
-        adapter = new MovieAdapter(viewModel.imageLoader, requireContext(), listRemote, viewModel, listLocal, (view1, position) -> {
-            NavDirections action = HomeMoviesFragmentDirections.actionHomeMoviesFragmentToMovieDetailFragment(
-                    listRemote.get(position).getId(),
-                    listRemote.get(position).getTitle(),
-                    viewModel.isFavouriteMovie(listRemote.get(position).getId(),listLocal),
-                    listRemote.get(position));
-            NavHostFragment.findNavController(this).navigate(action);
-        });
-        adapter.notifyDataSetChanged();
-        binding.rcvListMovies.setItemViewCacheSize(listRemote.size());
-        binding.rcvListMovies.setAdapter(adapter);
-        // load more
-        binding.rcvListMovies.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                int totalItemCount = layoutManager.getItemCount();
-
-                if (!isLoadingMore && lastVisibleItemPosition == totalItemCount - 1) {
-                    // Load more data
-                    loadMoreData();
-                }
+            if (adapter != null) adapter.setLdListMovie(listRemote);
+            if(movieResponse.isEmpty()){
+                binding.txtNothing.setVisibility(View.VISIBLE);
+            } else {
+                binding.txtNothing.setVisibility(View.GONE);
             }
         });
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private void loadMoreData() {
-        adapter.removeLoadingItem();
-        currentLoadPage++;
-        isLoadingMore = true;
-        viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
-        adapter.notifyDataSetChanged();
-    }
-
     @Override
     public void onResume() {
         super.onResume();

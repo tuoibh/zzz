@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.fragment.home;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -54,11 +56,6 @@ public class HomeViewModel extends ViewModel {
 
     private final MutableLiveData<List<MovieResult>> ldListMovieLocal = new MutableLiveData<>();
     public LiveData<List<MovieResult>> mLdListMovieLocal = ldListMovieLocal;
-    private final MutableLiveData<String> ldCurrentTopic = new MutableLiveData<>();
-    public LiveData<String> mLdCurrentTopic = ldCurrentTopic;
-
-    private final MutableLiveData<MovieDetailResponse> ldMovieDetail = new MutableLiveData<>();
-    public LiveData<MovieDetailResponse> mLdMovieDetail = ldMovieDetail;
 
     private final MutableLiveData<List<MovieResult>> ldListMovieRemote = new MutableLiveData<>();
     public LiveData<List<MovieResult>> mLdListMovieRemote = ldListMovieRemote;
@@ -76,42 +73,37 @@ public class HomeViewModel extends ViewModel {
     public LiveData<Integer> mLdYear = ldYear;
 
     public void getAllMovieByTopic(String topic, float point, String sortBy, int year, int num_page) {
-        Thread thread = new Thread(() -> {
-            getListMoviesUseCase.getAllMoviesByTopic(topic, num_page)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SingleObserver<MovieResponse>() {
-                        @Override
-                        public void onSubscribe(@NonNull Disposable d) {
+        getListMoviesUseCase.getAllMoviesByTopic(topic, num_page)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SingleObserver<MovieResponse>() {
+                @Override
+                public void onSubscribe(@NonNull Disposable d) {
+                }
+                @Override
+                public void onSuccess(@NonNull MovieResponse movieResponse) {
+                    List<MovieResult> listValue;
+                    listValue = movieResponse.getResults();
+                    List<MovieResult> listRs = new ArrayList<>();
+                    for (MovieResult item : listValue) {
+                        if ((Float.parseFloat(item.getVoteAverage()) >= point) && (Integer.parseInt(item.getReleaseDate().substring(0, 4)) >= year)) {
+                            listRs.add(item);
                         }
-
-                        @Override
-                        public void onSuccess(@NonNull MovieResponse movieResponse) {
-                            List<MovieResult> listValue;
-                            listValue = movieResponse.getResults();
-                            List<MovieResult> listRs = new ArrayList<>();
-                            for(MovieResult item: listValue){
-                                if((Float.parseFloat(item.getVoteAverage()) >= point) && (Integer.parseInt(item.getReleaseDate().substring(0, 4)) >= year)){
-                                    listRs.add(item);
-                                }
-                            }
-                            if(sortBy.equals(AppConfig.Companion.KEY_RELEASE_DATE)){
-                                Comparator<MovieResult> byReleaseDate = Comparator.comparing(MovieResult::getReleaseDate);
-                                listRs.sort(byReleaseDate.reversed());
-                            } else if(sortBy.equals(AppConfig.Companion.KEY_RATING)){
-                                Comparator<MovieResult> byRating = Comparator.comparing(MovieResult::getVoteAverage);
-                                listRs.sort(byRating.reversed());
-                            }
-                            ldListMovieRemote.postValue(listRs);
-                        }
-
-                        @Override
-                        public void onError(@NonNull Throwable e) {
-                            e.printStackTrace();
-                        }
-                    });
-        });
-        thread.start();
+                    }
+                    if (sortBy.equals(AppConfig.Companion.KEY_RELEASE_DATE)) {
+                        Comparator<MovieResult> byReleaseDate = Comparator.comparing(MovieResult::getReleaseDate);
+                        listRs.sort(byReleaseDate.reversed());
+                    } else if (sortBy.equals(AppConfig.Companion.KEY_RATING)) {
+                        Comparator<MovieResult> byRating = Comparator.comparing(MovieResult::getVoteAverage);
+                        listRs.sort(byRating.reversed());
+                    }
+                    ldListMovieRemote.postValue(listRs);
+                }
+                @Override
+                public void onError(@NonNull Throwable e) {
+                    e.printStackTrace();
+                }
+            });
     }
 
     public void getListMovieLocal() {
@@ -120,7 +112,6 @@ public class HomeViewModel extends ViewModel {
                 .subscribe(new SingleObserver<List<MovieResult>>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
-
                     }
 
                     @Override
@@ -130,7 +121,6 @@ public class HomeViewModel extends ViewModel {
 
                     @Override
                     public void onError(@NonNull Throwable e) {
-
                     }
                 });
     }
@@ -156,19 +146,22 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
-    public void getKeyTopicSharedPreferences(){
+    public void getKeyTopicSharedPreferences() {
         String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC);
         ldFilterTopic.postValue(topicKey);
     }
-    public void getPointSharedPreferences(){
+
+    public void getPointSharedPreferences() {
         float point = getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT);
         ldFilterPoint.postValue(point);
     }
-    public void getKeySortSharedPreferences(){
+
+    public void getKeySortSharedPreferences() {
         String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT);
         ldSortBy.postValue(keySort);
     }
-    public void getYearSharedPreferences(){
+
+    public void getYearSharedPreferences() {
         int year = getSettingsInforSharedPreferenceUseCase.getInt(AppConfig.Companion.KEY_YEAR);
         ldYear.postValue(year);
     }

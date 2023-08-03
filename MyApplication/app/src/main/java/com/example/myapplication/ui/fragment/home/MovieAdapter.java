@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -34,30 +35,13 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_LOADING = 2;
 
-    private boolean isLoading;
-
-    /*//
-    private LiveData<List<MovieResult>> ldListMovie;
-
-    public void setLdListMovie(LiveData<List<MovieResult>> ldListMovie) {
-        if(ldListMovie != null){
-            ldListMovie.removeObserver(mObserver);
-        }
-        this.ldListMovie = ldListMovie;
-        this.ldListMovie.observeForever(mObserver);
-        notifyDataSetChanged();
-    }
-*/
-
     public void setLdListMovie(List<MovieResult> listMovie) {
         this.listMovie = listMovie;
         notifyDataSetChanged();
     }
-//    private Observer<List<MovieResult>> mObserver = resultList -> notifyDataSetChanged();
-
     @Override
     public int getItemViewType(int position) {
-        if(listMovie != null && position == listMovie.size()-1){
+        if(listMovie != null && listMovie.size()>=19 && position == listMovie.size()-1){
             return TYPE_LOADING;
         }
         return TYPE_ITEM;
@@ -114,16 +98,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    private void bindImage(String url, ImageView imageView){
-        handler.post(() -> {
-            try{
-                imageLoader.loadImage(url, imageView);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-        });
-    }
-
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
@@ -146,10 +120,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 listener.onItemClick(v, position);
             });
         }
-    }
-
-    public void addLoadingItem(){
-        listMovie.add(new MovieResult());
     }
 
     public void removeLoadingItem(){

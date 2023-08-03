@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -15,7 +14,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +23,7 @@ import com.example.myapplication.R;
 import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.model.user.User;
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.domain.model.Topic;
+import com.example.myapplication.domain.model.movie.Topic;
 import com.example.myapplication.ui.adapter.AppPagerAdapter;
 import com.example.myapplication.ui.fragment.about.AboutFragment;
 import com.example.myapplication.ui.fragment.favourite.FavouriteMoviesFragment;
@@ -60,14 +58,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        FragmentManager fragmentManager = binding.viewPager.get();
+
+        //nav viewpager
 //        setViewPager();
-        //nav controller
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
         navController = navHostFragment.getNavController();
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
-        //nav viewpager
-//        setViewPager();
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         viewModel.createListTopic();
         setSpinner();
@@ -95,39 +91,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
-    public void uiToolBarHome(){
-        binding.imgBack.setVisibility(View.GONE);
-        binding.txtTitleScreen.setVisibility(View.GONE);
-        binding.imgMenuMain.setVisibility(View.VISIBLE);
-        binding.spinnerTopic.setVisibility(View.VISIBLE);
-        binding.imvGridToolbar.setVisibility(View.VISIBLE);
-        binding.imvMoreToolbar.setVisibility(View.VISIBLE);
-        binding.toolbar.setVisibility(View.VISIBLE);
-        binding.bottomNavigationView.setVisibility(View.VISIBLE);
-    }
 
-    public void uiToolbarOtherPage(String title){
-        binding.imgBack.setVisibility(View.GONE);
-        binding.spinnerTopic.setVisibility(View.GONE);
-        binding.imvGridToolbar.setVisibility(View.GONE);
-        binding.imvMoreToolbar.setVisibility(View.GONE);
-        binding.imgMenuMain.setVisibility(View.VISIBLE);
-        binding.txtTitleScreen.setVisibility(View.VISIBLE);
-        binding.txtTitleScreen.setText(title);
-        binding.toolbar.setVisibility(View.VISIBLE);
-        binding.bottomNavigationView.setVisibility(View.VISIBLE);
-    }
-
-    public void uiToolbarDetail(String movieTitle){
-        binding.spinnerTopic.setVisibility(View.GONE);
-        binding.imvGridToolbar.setVisibility(View.GONE);
-        binding.imvMoreToolbar.setVisibility(View.GONE);
-        binding.imgMenuMain.setVisibility(View.GONE);
-        binding.imgBack.setVisibility(View.VISIBLE);
-        binding.txtTitleScreen.setVisibility(View.VISIBLE);
-        binding.txtTitleScreen.setText(movieTitle);
-        binding.toolbar.setVisibility(View.VISIBLE);
-        binding.bottomNavigationView.setVisibility(View.VISIBLE);
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -146,11 +113,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void setViewPager()
     {
         setListFragment();
-        binding.viewPager.setAdapter(new AppPagerAdapter(this, listFragment));
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
         navController = navHostFragment.getNavController();
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
+
+        binding.viewPager.setAdapter(new AppPagerAdapter(this, listFragment));
         Navigation.setViewNavController(binding.viewPager, navController);
+        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
         binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -257,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setUIDrawer(viewModel.getUser(getPackageName()));
         setRcvReminder();
     }
-
     private void setRcvReminder() {
         viewModel.getListReminder();
         List<Reminder> reminderList  = new ArrayList<>();
@@ -270,5 +239,37 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         reminderAdapter = new DrawerReminderAdapter(reminderList);
         binding.layoutProfile.rcvReminder.setAdapter(reminderAdapter);
         adapter.notifyDataSetChanged();
+    }
+    public void uiToolBarHome(){
+        binding.imgBack.setVisibility(View.GONE);
+        binding.txtTitleScreen.setVisibility(View.GONE);
+        binding.imgMenuMain.setVisibility(View.VISIBLE);
+        binding.spinnerTopic.setVisibility(View.VISIBLE);
+        binding.imvGridToolbar.setVisibility(View.VISIBLE);
+        binding.imvMoreToolbar.setVisibility(View.VISIBLE);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
+    }
+    public void uiToolbarOtherPage(String title){
+        binding.imgBack.setVisibility(View.GONE);
+        binding.spinnerTopic.setVisibility(View.GONE);
+        binding.imvGridToolbar.setVisibility(View.GONE);
+        binding.imvMoreToolbar.setVisibility(View.GONE);
+        binding.imgMenuMain.setVisibility(View.VISIBLE);
+        binding.txtTitleScreen.setVisibility(View.VISIBLE);
+        binding.txtTitleScreen.setText(title);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
+    }
+    public void uiToolbarDetail(String movieTitle){
+        binding.spinnerTopic.setVisibility(View.GONE);
+        binding.imvGridToolbar.setVisibility(View.GONE);
+        binding.imvMoreToolbar.setVisibility(View.GONE);
+        binding.imgMenuMain.setVisibility(View.GONE);
+        binding.imgBack.setVisibility(View.VISIBLE);
+        binding.txtTitleScreen.setVisibility(View.VISIBLE);
+        binding.txtTitleScreen.setText(movieTitle);
+        binding.toolbar.setVisibility(View.VISIBLE);
+        binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
 }

@@ -35,15 +35,12 @@ public class CastNCrewAdapter extends RecyclerView.Adapter<CastNCrewAdapter.Cast
     @Override
     public void onBindViewHolder(@NonNull CastNCrewAdapter.CastNCrewViewHolder holder, int position) {
         holder.binding.txtCncName.setText(castNCrew.getCast().get(position).getName());
-//        Glide.with(holder.binding.getRoot())
-//                .load(AppConfig.Companion.BASE_IMAGE+castNCrew.getCast().get(position).getProfilePath())
-//                .into(holder.binding.imvCastNCrew);
         imageLoader.loadImage(AppConfig.Companion.BASE_IMAGE+castNCrew.getCast().get(position).getProfilePath(), holder.binding.imvCastNCrew);
     }
 
     @Override
     public int getItemCount() {
-        return castNCrew.getCast().size() /*+ castNCrew.getCrew().size()*/;
+        return castNCrew.getCast().size();
     }
 
     public static class CastNCrewViewHolder extends RecyclerView.ViewHolder {
