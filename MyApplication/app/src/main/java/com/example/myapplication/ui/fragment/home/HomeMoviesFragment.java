@@ -68,12 +68,12 @@ public class HomeMoviesFragment extends Fragment {
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             isRefresh = true;
             currentLoadPage = 1;
-//            viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
-            new Handler().postDelayed(() -> {
-                listRemote.clear();
-                getListMovieRemote();
-                binding.swipeRefreshLayout.setRefreshing(false);
-            }, 1000);
+            viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, 1);
+//            new Handler().postDelayed(() -> {
+//                listRemote.clear();
+//                getListMovieRemote();
+//                binding.swipeRefreshLayout.setRefreshing(false);
+//            }, 1000);
         });
         //set adapter
         adapter = new MovieAdapter(viewModel.imageLoader, requireContext(), listRemote, viewModel, listLocal, (view1, position) -> {
@@ -171,6 +171,7 @@ public class HomeMoviesFragment extends Fragment {
                 listRemote.clear();
                 listRemote.addAll(movieResponse);
                 isRefresh = false;
+                binding.swipeRefreshLayout.setRefreshing(false);
             } else if (isLoadingMore) {
                 listRemote.addAll(movieResponse);
                 isLoadingMore = false;
