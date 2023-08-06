@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.myapplication.core.OnItemMovieClickListener;
 import com.example.myapplication.databinding.FragmentFavoriteBinding;
 import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.ui.activity.MainActivity;
@@ -47,10 +49,25 @@ public class FavouriteMoviesFragment extends Fragment {
         }
         viewModel.mLdListMovieLocal.observe(requireActivity(), movieResults -> {
             activity.setBadgeTextFavourite(movieResults.size());
-            adapter = new MovieFavouriteAdapter(movieResults, viewModel, (view1, position) -> {
-                MovieResult rs = movieResults.get(position);
-                NavDirections action = FavouriteMoviesFragmentDirections.actionFavouriteMoviesFragmentToMovieDetailFragment(rs.getId(), rs.getTitle(), rs.isFavourite(), rs);
-                NavHostFragment.findNavController(this).navigate(action);
+            adapter = new MovieFavouriteAdapter(movieResults, new OnItemMovieClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    MovieResult rs = movieResults.get(position);
+                    NavDirections action = FavouriteMoviesFragmentDirections.actionFavouriteMoviesFragmentToMovieDetailFragment(rs.getId(), rs.getTitle(), rs.isFavourite(), rs);
+                    NavHostFragment.findNavController(requireParentFragment()).navigate(action);
+                }
+
+                @Override
+                public void onFavouriteClick(View view, boolean isCheck, int position) {
+                    if(!isCheck){
+                        viewModel.deleteFavouriteMovie(movieResults.get(position).getId());
+                    }
+                }
+
+                @Override
+                public void onChangeFavouriteState(CheckBox view, int position) {
+
+                }
             });
             adapter.notifyDataSetChanged();
             binding.rcvFavouriteMovies.setAdapter(adapter);
@@ -61,6 +78,5 @@ public class FavouriteMoviesFragment extends Fragment {
     public void onResume() {
         super.onResume();
         activity.uiToolbarOtherPage("Favorite");
-        viewModel.getListFavouriteMovie();
     }
 }

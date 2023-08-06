@@ -52,11 +52,18 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<List<Reminder>> ldListReminder = new MutableLiveData<>();
     public LiveData<List<Reminder>> mLdReminder = ldListReminder;
 
+    private final MutableLiveData<Boolean> isChecked = new MutableLiveData<>(false
+    );
+    public LiveData<Boolean> mIsCheck = isChecked;
+
     public void updateTopic(Topic topic){
         insertSettingsInforSharedPreferenceUseCase.insertString(AppConfig.Companion.KEY_TOPIC, topic.key);
         getTopic();
     }
 
+    public void setCheck(boolean mIsChecked){
+        isChecked.postValue(mIsChecked);
+    }
     public void getTopic(){
         Topic topic = listTopic.get(0);
         String str = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC);

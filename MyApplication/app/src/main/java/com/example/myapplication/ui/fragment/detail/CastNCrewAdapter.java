@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.core.OnItemClickListener;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.databinding.ItemCastNCrewBinding;
 import com.example.myapplication.domain.model.castncrew.CastNCrewResponse;
@@ -14,14 +13,10 @@ import com.example.myapplication.domain.repo.ImageLoader;
 
 public class CastNCrewAdapter extends RecyclerView.Adapter<CastNCrewAdapter.CastNCrewViewHolder> {
     CastNCrewResponse castNCrew;
-    OnItemClickListener listener;
-    MovieDetailViewModel viewModel;
     ImageLoader imageLoader;
 
-    public CastNCrewAdapter(ImageLoader imageLoader, CastNCrewResponse castNCrew, MovieDetailViewModel viewModel, OnItemClickListener listener) {
+    public CastNCrewAdapter(ImageLoader imageLoader, CastNCrewResponse castNCrew) {
         this.castNCrew = castNCrew;
-        this.listener = listener;
-        this.viewModel = viewModel;
         this.imageLoader = imageLoader;
     }
 
@@ -49,12 +44,6 @@ public class CastNCrewAdapter extends RecyclerView.Adapter<CastNCrewAdapter.Cast
         public CastNCrewViewHolder(ItemCastNCrewBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-        }
-
-        public void onClickItem(OnItemClickListener listener, int position){
-            itemView.setOnClickListener(v -> {
-                listener.onItemClick(v, position);
-            });
         }
     }
 }

@@ -10,6 +10,7 @@ import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.domain.model.movie.MovieResponse;
 import com.example.myapplication.domain.model.movie.MovieResult;
+import com.example.myapplication.domain.model.movie.SettingInfo;
 import com.example.myapplication.domain.repo.ImageLoader;
 import com.example.myapplication.domain.usecase.movielocal.DeleteMovieInLocalUseCase;
 import com.example.myapplication.domain.usecase.listmovie.GetListMoviesUseCase;
@@ -34,7 +35,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class HomeViewModel extends ViewModel {
     private GetListMoviesUseCase getListMoviesUseCase;
     private InsertMovieToLocalUseCase insertMovieToLocalUseCase;
-    private GetMovieDetailUseCase getMovieDetailUseCase;
     private DeleteMovieInLocalUseCase deleteMovieInLocalUseCase;
     private GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
     ImageLoader imageLoader;
@@ -42,13 +42,11 @@ public class HomeViewModel extends ViewModel {
     @Inject
     public HomeViewModel(GetListMoviesUseCase getListMoviesUseCase,
                          InsertMovieToLocalUseCase insertMovieToLocalUseCase,
-                         GetMovieDetailUseCase getMovieDetailUseCase,
                          DeleteMovieInLocalUseCase deleteMovieInLocalUseCase,
                          GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase,
                          ImageLoader imageLoader) {
         this.getListMoviesUseCase = getListMoviesUseCase;
         this.insertMovieToLocalUseCase = insertMovieToLocalUseCase;
-        this.getMovieDetailUseCase = getMovieDetailUseCase;
         this.deleteMovieInLocalUseCase = deleteMovieInLocalUseCase;
         this.getSettingsInforSharedPreferenceUseCase = getSettingsInforSharedPreferenceUseCase;
         this.imageLoader = imageLoader;
@@ -72,14 +70,16 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<Integer> ldYear = new MutableLiveData<>();
     public LiveData<Integer> mLdYear = ldYear;
 
+    private final MutableLiveData<SettingInfo> ldSettingInfo = new MutableLiveData<>();
+    public LiveData<SettingInfo> mLdSettingInfo = ldSettingInfo;
+
     public void getAllMovieByTopic(String topic, float point, String sortBy, int year, int num_page) {
         getListMoviesUseCase.getAllMoviesByTopic(topic, num_page)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(new SingleObserver<MovieResponse>() {
                 @Override
-                public void onSubscribe(@NonNull Disposable d) {
-                }
+                public void onSubscribe(@NonNull Disposable d) {}
                 @Override
                 public void onSuccess(@NonNull MovieResponse movieResponse) {
                     List<MovieResult> listValue;
@@ -111,17 +111,13 @@ public class HomeViewModel extends ViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<MovieResult>>() {
                     @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
-
+                    public void onSubscribe(@NonNull Disposable d) {}
                     @Override
                     public void onSuccess(@NonNull List<MovieResult> movieResults) {
                         ldListMovieLocal.postValue(movieResults);
                     }
-
                     @Override
-                    public void onError(@NonNull Throwable e) {
-                    }
+                    public void onError(@NonNull Throwable e) {}
                 });
     }
 
@@ -144,6 +140,15 @@ public class HomeViewModel extends ViewModel {
             }
             return false;
         }
+    }
+
+    public void getAllSharedSettingInfo(){
+        String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC);
+        float point = getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT);
+        String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT);
+        int year = getSettingsInforSharedPreferenceUseCase.getInt(AppConfig.Companion.KEY_YEAR);
+        ldSettingInfo.postValue(new SettingInfo(topicKey, point, keySort, year));
+//        SettingInfo(topicKey, point, keySort, year);
     }
 
     public void getKeyTopicSharedPreferences() {

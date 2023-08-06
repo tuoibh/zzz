@@ -7,18 +7,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.core.OnItemMovieClickListener;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.domain.model.movie.Topic;
 import com.example.myapplication.domain.model.movie.MovieResult;
@@ -62,28 +63,45 @@ public class HomeMoviesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if(listLocal != null) listLocal.clear();
         viewModel.getListMovieLocal();
 
+        Log.d("tbh_", "onViewCreated: HomeMoviesFragment + " + adapter);
         // refresh
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             isRefresh = true;
             currentLoadPage = 1;
-            viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, 1);
-//            new Handler().postDelayed(() -> {
+            new Handler().postDelayed(() -> {
 //                listRemote.clear();
 //                getListMovieRemote();
 //                binding.swipeRefreshLayout.setRefreshing(false);
-//            }, 1000);
+                viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, 1);
+            }, 1000);
         });
-        //set adapter
-        adapter = new MovieAdapter(viewModel.imageLoader, requireContext(), listRemote, viewModel, listLocal, (view1, position) -> {
-            NavDirections action = HomeMoviesFragmentDirections.actionHomeMoviesFragmentToMovieDetailFragment(
+        adapter = new MovieAdapter(viewModel.imageLoader, listRemote, listLocal, new OnItemMovieClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                NavDirections action = HomeMoviesFragmentDirections.actionHomeMoviesFragmentToMovieDetailFragment(
                     listRemote.get(position).getId(),
                     listRemote.get(position).getTitle(),
                     viewModel.isFavouriteMovie(listRemote.get(position).getId(),listLocal),
                     listRemote.get(position));
-            NavHostFragment.findNavController(this).navigate(action);
+            NavHostFragment.findNavController(requireParentFragment()).navigate(action);
+            };
 
+            @Override
+            public void onFavouriteClick(View view, boolean isCheck, int position) {
+                if(isCheck){
+                    viewModel.addMovieToFavourite(listRemote.get(position));
+                } else{
+                    viewModel.deleteMovieFavourite(listRemote.get(position).getId());
+                }
+            }
+
+            @Override
+            public void onChangeFavouriteState(CheckBox view, int position) {
+                view.setChecked(viewModel.isFavouriteMovie(listRemote.get(position).getId(), listLocal));
+            }
         });
         adapter.notifyDataSetChanged();
         binding.rcvListMovies.setItemViewCacheSize(listRemote.size());
@@ -123,6 +141,7 @@ public class HomeMoviesFragment extends Fragment {
         viewModel.getListMovieLocal();
         viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {
             listLocal = list;
+            if(adapter != null) adapter.setLdListMovie(listRemote, listLocal);
             activity.setBadgeTextFavourite(list.size());
         });
 
@@ -154,19 +173,6 @@ public class HomeMoviesFragment extends Fragment {
         );
         // get list remote
         viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
-            /*if(isLoadingMore){
-                listRemote.addAll(movieResponse);
-                isLoadingMore = false;
-            } else{
-                listRemote.clear();
-                listRemote.addAll(movieResponse);
-            }
-            if (adapter != null) adapter.setLdListMovie(listRemote);
-            if(movieResponse.isEmpty()){
-                binding.txtNothing.setVisibility(View.VISIBLE);
-            } else {
-                binding.txtNothing.setVisibility(View.GONE);
-            }*/
             if (isRefresh) {
                 listRemote.clear();
                 listRemote.addAll(movieResponse);
@@ -176,7 +182,7 @@ public class HomeMoviesFragment extends Fragment {
                 listRemote.addAll(movieResponse);
                 isLoadingMore = false;
             }
-            if (adapter != null) adapter.setLdListMovie(listRemote);
+            if (adapter != null) adapter.setLdListMovie(listRemote, listLocal);
             if(movieResponse.isEmpty()){
                 binding.txtNothing.setVisibility(View.VISIBLE);
             } else {

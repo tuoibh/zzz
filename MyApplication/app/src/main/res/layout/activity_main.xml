@@ -54,12 +54,20 @@
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_more_toolbar"
                 android:layout_gravity="end"/>
-            <ImageView
+            <!--<ImageView
                 android:id="@+id/imv_grid_toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_grid"
+                android:layout_gravity="end"/>-->
+            <CheckBox
+                android:id="@+id/imv_grid_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:button="@drawable/slt_layout_manager"
+                android:buttonTint="@color/white"
                 android:layout_gravity="end"/>
         </androidx.appcompat.widget.Toolbar>
 

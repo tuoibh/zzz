@@ -18,6 +18,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 
 import com.example.myapplication.R;
 import com.example.myapplication.domain.model.reminder.Reminder;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.imgMenuMain.setOnClickListener(v -> binding.drawerLayout.openDrawer(GravityCompat.START));
         drawerClick();
         setUIDrawer();
+        binding.imvGridToolbar.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setCheck(isChecked));
     }
 
     private void setSpinner() {

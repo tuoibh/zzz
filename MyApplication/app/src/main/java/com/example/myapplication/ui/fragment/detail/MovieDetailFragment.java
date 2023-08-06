@@ -89,8 +89,7 @@ public class MovieDetailFragment extends Fragment {
         });
         viewModel.getMovieCastNCrew(args.getMovieId()+"");
         viewModel.mLdCastNCrew.observe(requireActivity(), castNCrewResponse -> {
-            CastNCrewAdapter adapter = new CastNCrewAdapter(viewModel.imageLoader, castNCrewResponse, viewModel, (view1, position) -> {
-            });
+            CastNCrewAdapter adapter = new CastNCrewAdapter(viewModel.imageLoader, castNCrewResponse);
             adapter.notifyDataSetChanged();
             binding.rcvCastNCrew.setAdapter(adapter);
         });

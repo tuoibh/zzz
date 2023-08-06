@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.core.OnItemClickListener;
+import com.example.myapplication.core.OnItemMovieClickListener;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.ItemMovieLinearBinding;
 import com.example.myapplication.domain.model.movie.MovieResult;
@@ -17,15 +17,11 @@ import java.util.List;
 
 public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAdapter.MovieHolderItem> {
     List<MovieResult> listMovie;
-    OnItemClickListener listener;
-    FavouriteMoviesViewModel viewModel;
+    OnItemMovieClickListener listener;
 
-    private boolean isLoading;
-
-    public MovieFavouriteAdapter(List<MovieResult> listMovie, FavouriteMoviesViewModel viewModel, OnItemClickListener listener) {
+    public MovieFavouriteAdapter(List<MovieResult> listMovie, OnItemMovieClickListener listener) {
         this.listMovie = listMovie;
         this.listener = listener;
-        this.viewModel = viewModel;
     }
 
     @NonNull
@@ -48,11 +44,7 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
         holder.binding.txtReleaseDateText.setText(listMovie.get(position).getReleaseDate());
         holder.binding.txtRatingText.setText(listMovie.get(position).getVoteAverage()+"/10");
         holder.binding.imvStarFavorite.setChecked(true);
-        holder.binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(!isChecked){
-                viewModel.deleteFavouriteMovie(listMovie.get(position).getId());
-            }
-        });
+        holder.onFavouriteClick(listener, position);
         holder.onClickItem(listener, position);
     }
 
@@ -68,10 +60,12 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
             super(binding.getRoot());
             this.binding = binding;
         }
-        public void onClickItem(OnItemClickListener listener, int position){
-            itemView.setOnClickListener(v -> {
-                listener.onItemClick(v, position);
-            });
+        public void onClickItem(OnItemMovieClickListener listener, int position){
+            itemView.setOnClickListener(v -> listener.onItemClick(v, position));
+        }
+        public void onFavouriteClick(OnItemMovieClickListener listener, int position){
+            binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    listener.onFavouriteClick(buttonView, isChecked, position));
         }
     }
 }

@@ -1,19 +1,13 @@
 package com.example.myapplication.ui.fragment.home;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.core.OnItemClickListener;
+import com.example.myapplication.core.OnItemMovieClickListener;
 import com.example.myapplication.databinding.ItemLoadingBinding;
 import com.example.myapplication.databinding.ItemMovieLinearBinding;
 import com.example.myapplication.domain.model.movie.MovieResult;
@@ -24,19 +18,14 @@ import java.util.List;
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     List<MovieResult> listMovie;
     List<MovieResult> listLocal;
-    OnItemClickListener listener;
-    HomeViewModel viewModel;
-    Context context;
+    OnItemMovieClickListener listener;
     ImageLoader imageLoader;
-
-    private HandlerThread handlerThread;
-    private Handler handler;
-
     private static final int TYPE_ITEM = 1;
     private static final int TYPE_LOADING = 2;
 
-    public void setLdListMovie(List<MovieResult> listMovie) {
+    public void setLdListMovie(List<MovieResult> listMovie, List<MovieResult> listLocal) {
         this.listMovie = listMovie;
+        this.listLocal = listLocal;
         notifyDataSetChanged();
     }
     @Override
@@ -46,11 +35,12 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
         return TYPE_ITEM;
     }
-    public MovieAdapter(ImageLoader imageLoader, Context context, List<MovieResult> listMovie, HomeViewModel viewModel, List<MovieResult> listLocal, OnItemClickListener listener) {
-        this.context = context;
+    public MovieAdapter(ImageLoader imageLoader,
+                        List<MovieResult> listMovie,
+                        List<MovieResult> listLocal,
+                        OnItemMovieClickListener listener) {
         this.listMovie = listMovie;
         this.listener = listener;
-        this.viewModel = viewModel;
         this.imageLoader = imageLoader;
         this.listLocal = listLocal;
     }
@@ -59,16 +49,18 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if(TYPE_ITEM==viewType){
-            ItemMovieLinearBinding binding = ItemMovieLinearBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            ItemMovieLinearBinding binding = ItemMovieLinearBinding
+                    .inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new MovieHolderItem(binding);
         }else {
-            ItemLoadingBinding binding  = ItemLoadingBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            ItemLoadingBinding binding  = ItemLoadingBinding
+                    .inflate(LayoutInflater.from(parent.getContext()), parent, false);
             return new MovieHolderLoading(binding);
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()){
             case TYPE_ITEM:
                 MovieHolderItem viewHolderItem = (MovieHolderItem) holder;
@@ -77,21 +69,11 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 viewHolderItem.binding.txtOverviewDescription.setText(listMovie.get(position).getOverview());
                 viewHolderItem.binding.txtReleaseDateText.setText(listMovie.get(position).getReleaseDate());
                 viewHolderItem.binding.txtRatingText.setText(listMovie.get(position).getVoteAverage()+"/10");
-                if(viewModel.isFavouriteMovie(listMovie.get(position).getId(), listLocal)){
-                    viewHolderItem.binding.imvStarFavorite.setChecked(true);
-                }
-                viewHolderItem.binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    if(isChecked){
-                        viewModel.addMovieToFavourite(listMovie.get(position));
-                    }
-                    else{
-                        viewModel.deleteMovieFavourite(listMovie.get(position).getId());
-                    }
-                });
                 viewHolderItem.onClickItem(listener, position);
+                viewHolderItem.onFavouriteItemClick(listener, position);
+                viewHolderItem.onSetFavouriteState(listener, position);
                 break;
             case TYPE_LOADING:
-                MovieHolderLoading viewHolderLoading = (MovieHolderLoading) holder;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid view type");
@@ -101,7 +83,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
-//        handlerThread.quit();
     }
     @Override
     public int getItemCount() {
@@ -115,11 +96,19 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             super(binding.getRoot());
             this.binding = binding;
         }
-        public void onClickItem(OnItemClickListener listener, int position){
+        public void onClickItem(OnItemMovieClickListener listener, int position){
             itemView.setOnClickListener(v -> {
                 listener.onItemClick(v, position);
             });
         }
+        public void onFavouriteItemClick(OnItemMovieClickListener listener, int position){
+            binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    listener.onFavouriteClick(buttonView, isChecked, position));
+        }
+        public void onSetFavouriteState(OnItemMovieClickListener listener, int position){
+            listener.onChangeFavouriteState(binding.imvStarFavorite, position);
+        }
+
     }
 
     public void removeLoadingItem(){
@@ -132,8 +121,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public static class MovieHolderLoading extends RecyclerView.ViewHolder {
-        ItemLoadingBinding binding;
-
         public MovieHolderLoading(ItemLoadingBinding binding) {
             super(binding.getRoot());
         }
