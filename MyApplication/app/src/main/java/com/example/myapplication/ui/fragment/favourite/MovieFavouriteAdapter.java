@@ -19,6 +19,10 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
     List<MovieResult> listMovie;
     OnItemMovieClickListener listener;
 
+    public void setListMovie(List<MovieResult> listMovie){
+        this.listMovie = listMovie;
+        notifyDataSetChanged();
+    }
     public MovieFavouriteAdapter(List<MovieResult> listMovie, OnItemMovieClickListener listener) {
         this.listMovie = listMovie;
         this.listener = listener;

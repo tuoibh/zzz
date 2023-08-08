@@ -13,9 +13,11 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -63,20 +65,38 @@ public class HomeMoviesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        activity.uiToolBarHome();
         if(listLocal != null) listLocal.clear();
         viewModel.getListMovieLocal();
+        getListMovieRemote();
 
-        Log.d("tbh_", "onViewCreated: HomeMoviesFragment + " + adapter);
         // refresh
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             isRefresh = true;
             currentLoadPage = 1;
             new Handler().postDelayed(() -> {
-//                listRemote.clear();
-//                getListMovieRemote();
-//                binding.swipeRefreshLayout.setRefreshing(false);
-                viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, 1);
+                listRemote.clear();
+                binding.swipeRefreshLayout.setRefreshing(false);
+                viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, currentLoadPage);
             }, 1000);
+        });
+
+        viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
+            if (isRefresh) {
+                listRemote.clear();
+                listRemote.addAll(movieResponse);
+                isRefresh = false;
+                binding.swipeRefreshLayout.setRefreshing(false);
+            } else if (isLoadingMore) {
+                listRemote.addAll(movieResponse);
+                isLoadingMore = false;
+            }
+            if (adapter != null) adapter.setLdListMovie(listRemote, listLocal);
+            if(movieResponse.isEmpty()){
+                binding.txtNothing.setVisibility(View.VISIBLE);
+            } else {
+                binding.txtNothing.setVisibility(View.GONE);
+            }
         });
         adapter = new MovieAdapter(viewModel.imageLoader, listRemote, listLocal, new OnItemMovieClickListener() {
             @Override
@@ -102,6 +122,10 @@ public class HomeMoviesFragment extends Fragment {
             public void onChangeFavouriteState(CheckBox view, int position) {
                 view.setChecked(viewModel.isFavouriteMovie(listRemote.get(position).getId(), listLocal));
             }
+        });
+        activity.getViewModel().mIsCheck.observe(requireActivity(), isGrid -> {
+            adapter.setItemUI(isGrid);
+            binding.rcvListMovies.setLayoutManager(isGrid? new GridLayoutManager(requireContext(), 2) : new LinearLayoutManager(requireContext()));
         });
         adapter.notifyDataSetChanged();
         binding.rcvListMovies.setItemViewCacheSize(listRemote.size());
@@ -144,7 +168,6 @@ public class HomeMoviesFragment extends Fragment {
             if(adapter != null) adapter.setLdListMovie(listRemote, listLocal);
             activity.setBadgeTextFavourite(list.size());
         });
-
         // get all info in sharedPreference
         //topic
         viewModel.getKeyTopicSharedPreferences();
@@ -166,33 +189,13 @@ public class HomeMoviesFragment extends Fragment {
                 point = aFloat;
                 activity.getViewModel().mTopicState.observe(requireActivity(), topic -> {
                     sharedTopic = topic;
-                    currentLoadPage = 1;
                     viewModel.getAllMovieByTopic(topic.key, aFloat, keySort, year, currentLoadPage);
                 });
             }
         );
-        // get list remote
-        viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
-            if (isRefresh) {
-                listRemote.clear();
-                listRemote.addAll(movieResponse);
-                isRefresh = false;
-                binding.swipeRefreshLayout.setRefreshing(false);
-            } else if (isLoadingMore) {
-                listRemote.addAll(movieResponse);
-                isLoadingMore = false;
-            }
-            if (adapter != null) adapter.setLdListMovie(listRemote, listLocal);
-            if(movieResponse.isEmpty()){
-                binding.txtNothing.setVisibility(View.VISIBLE);
-            } else {
-                binding.txtNothing.setVisibility(View.GONE);
-            }
-        });
     }
     @Override
     public void onResume() {
         super.onResume();
-        activity.uiToolBarHome();
     }
 }

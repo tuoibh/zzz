@@ -1,6 +1,8 @@
-package com.example.myapplication.ui.fragment.about;
+package com.example.myapplication.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,15 +10,15 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.myapplication.databinding.FragmentAboutBinding;
+import com.example.myapplication.R;
+import com.example.myapplication.databinding.FragmentSplashBinding;
 import com.example.myapplication.ui.activity.MainActivity;
 
-public class AboutFragment extends Fragment {
-    private MainActivity activity;
-    private FragmentAboutBinding binding;
+public class SplashFragment extends Fragment {
+    FragmentSplashBinding binding;
+    MainActivity activity;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,22 +28,18 @@ public class AboutFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentAboutBinding.inflate(inflater, container, false);
+        binding = FragmentSplashBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        activity.uiToolbarOtherPage("About");
-        binding.txtAbout.setOnClickListener(v -> {
-            NavDirections action = AboutFragmentDirections.actionAboutFragmentToWebViewFragment();
-            NavHostFragment.findNavController(requireParentFragment()).navigate(action);
-        });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                NavHostFragment.findNavController(requireParentFragment()).navigate(R.id.action_splashFragment_to_homeMoviesFragment);
+            }
+        }, 2500);
     }
 }

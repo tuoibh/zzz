@@ -1,7 +1,9 @@
 package com.example.myapplication.data.repo;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -41,15 +43,17 @@ public class ImageLoaderImpl implements ImageLoader {
     }
 
     @Override
-    public Bitmap getBitmap(String imageUrl) {
-        Bitmap bm;
-        try {
-            URL url = new URL(imageUrl);
-            bm = Glide.with(context).asBitmap().load(url).submit().get();
-        } catch (ExecutionException | InterruptedException | MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        Log.d("tbh_", "getBitmap: ImageLoaderImpl "+bm);
-        return bm;
+    public Bitmap getBitmap(Context context) {
+//        Bitmap bm;
+//        try {
+//            URL url = new URL(imageUrl);
+//            bm = Glide.with(context).asBitmap().load(url).submit().get();
+//        } catch (ExecutionException | InterruptedException | MalformedURLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        Log.d("tbh_", "getBitmap: ImageLoaderImpl "+bm);
+//        return bm;
+        Log.d("tbh_", "getBitmap: ImageLoaderImpl"+ BitmapFactory.decodeResource(context.getResources(), R.drawable.img_0));
+        return BitmapFactory.decodeResource(context.getResources(), R.drawable.img_0);
     }
 }

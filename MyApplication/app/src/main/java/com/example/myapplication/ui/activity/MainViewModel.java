@@ -9,9 +9,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.myapplication.R;
 import com.example.myapplication.core.AppConfig;
+import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.model.user.User;
 import com.example.myapplication.domain.model.movie.Topic;
+import com.example.myapplication.domain.usecase.movielocal.SearchMovieUseCase;
 import com.example.myapplication.domain.usecase.reminder.GetListReminderUseCase;
 import com.example.myapplication.domain.usecase.setting.GetSettingsInforSharedPreferenceUseCase;
 import com.example.myapplication.domain.usecase.profile.GetUserInfoUseCase;
@@ -35,15 +37,17 @@ public class MainViewModel extends ViewModel {
     private final GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
     private final GetUserInfoUseCase getUserInfoUseCase;
     private final GetListReminderUseCase getListReminderUseCase;
+    SearchMovieUseCase searchMovieUseCase;
 
     List<Topic> listTopic = new ArrayList<Topic>();
 
     @Inject
-    public MainViewModel(InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase, GetUserInfoUseCase getUserInfoUseCase, GetListReminderUseCase getListReminderUseCase) {
+    public MainViewModel(InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase, GetUserInfoUseCase getUserInfoUseCase, GetListReminderUseCase getListReminderUseCase, SearchMovieUseCase searchMovieUseCase) {
         this.insertSettingsInforSharedPreferenceUseCase = insertSettingsInforSharedPreferenceUseCase;
         this.getSettingsInforSharedPreferenceUseCase = getSettingsInforSharedPreferenceUseCase;
         this.getUserInfoUseCase = getUserInfoUseCase;
         this.getListReminderUseCase = getListReminderUseCase;
+        this.searchMovieUseCase = searchMovieUseCase;
     }
 
     private final MutableLiveData<Topic> topicState = new MutableLiveData<>();
@@ -55,6 +59,9 @@ public class MainViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isChecked = new MutableLiveData<>(false
     );
     public LiveData<Boolean> mIsCheck = isChecked;
+
+    private final MutableLiveData<List<MovieResult>> ldListSearchMovie = new MutableLiveData<>();
+    public LiveData<List<MovieResult>> mLdListSearchMovie = ldListSearchMovie;
 
     public void updateTopic(Topic topic){
         insertSettingsInforSharedPreferenceUseCase.insertString(AppConfig.Companion.KEY_TOPIC, topic.key);
@@ -108,5 +115,24 @@ public class MainViewModel extends ViewModel {
 
                     }
                 });
+    }
+
+
+    public void searchMovie(String movieTitle){
+        Thread thread = new Thread(() -> searchMovieUseCase.searchMovieLocal(movieTitle).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<MovieResult>>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {}
+                    @Override
+                    public void onSuccess(@NonNull List<MovieResult> movieResults) {
+                        ldListSearchMovie.postValue(movieResults);
+                    }
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+                }));
+        thread.start();
     }
 }

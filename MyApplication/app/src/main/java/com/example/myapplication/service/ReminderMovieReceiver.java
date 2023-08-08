@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import com.example.myapplication.core.AppConfig;
 
@@ -11,10 +12,10 @@ public class ReminderMovieReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction()!=null){
-            if(intent.getAction().equals(AppConfig.Companion.ACTION_NOTI)){
+        if (intent.getAction() != null) {
+            if (intent.getAction().equals(AppConfig.Companion.ACTION_NOTI)) {
                 setAlarmOneOn(context, intent);
-            } else if(intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)){
+            } else if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
                 setAlarmAllOn(context);
             }
         }
@@ -23,7 +24,7 @@ public class ReminderMovieReceiver extends BroadcastReceiver {
     private void setAlarmAllOn(Context context) {
     }
 
-    private void setAlarmOneOn(Context context, Intent intent){
+    private void setAlarmOneOn(Context context, Intent intent) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Intent aIntent = new Intent(context, ReminderMovieService.class);
             String title = intent.getStringExtra(AppConfig.Companion.NOTIFICATION_TITLE_MOVIE);

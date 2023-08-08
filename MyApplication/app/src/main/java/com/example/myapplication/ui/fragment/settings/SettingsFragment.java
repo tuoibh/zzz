@@ -53,6 +53,7 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        activity.uiToolbarOtherPage("Settings");
         viewModel.mLdMoviePoint.observe(requireActivity(), integer -> binding.txtRateFromText.setText(integer + ""));
         binding.seekbarMoviePoint.setMax(total_point_movie);
         binding.seekbarMoviePoint.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -81,13 +82,6 @@ public class SettingsFragment extends Fragment {
         filerCLick();
         sortClick();
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        activity.uiToolbarOtherPage("Settings");
-    }
-
     private void setYearDialog() {
         try {
             NumberPicker numberPicker = new NumberPicker(requireContext());

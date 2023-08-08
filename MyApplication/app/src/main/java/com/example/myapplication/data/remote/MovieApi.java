@@ -9,9 +9,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-//api.themoviedb.org/3/movie/popular?api_key=e7631ffcb8e766993e5ec0c1f4245f93&page={pageNumber}
-//api.themoviedb.org/3/movie/{movieId}?api_key=e7631ffcb8e766993e5ec0c1f4245f93
-
 public interface MovieApi {
     @GET("{topic}")
     Single<MovieResponses> getListMovie(@Path("topic") String topic, @Query("api_key") String apiKey, @Query("page") int pageNum);

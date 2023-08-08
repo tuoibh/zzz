@@ -53,13 +53,12 @@ public class ReminderMovieService extends Service {
 
     @Inject
     GetListReminderUseCase getListReminderUseCase;
-    ImageLoader imageLoader = new ImageLoaderImpl(this);
     private List<Reminder> reminderList;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        EntryPointAccessors.fromApplication(this, DaggerApp_HiltComponents_SingletonC.class);
+//        EntryPointAccessors.fromApplication(this, DaggerApp_HiltComponents_SingletonC.class);
     }
 
     @Nullable
@@ -79,7 +78,7 @@ public class ReminderMovieService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String name = "movie";
             String descriptionText = "notification";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel mChannel = new NotificationChannel(AppConfig.Companion
                     .CHANNEL_ID, name, importance);
             mChannel.setDescription(descriptionText);
@@ -89,20 +88,15 @@ public class ReminderMovieService extends Service {
     }
 
     private void createNotify(Intent intent) {
-        String imageUrl = intent.getStringExtra(AppConfig.Companion.NOTIFICATION_URL_POSTER_MOVIE);
-        try{
             Notification notification = new NotificationCompat.Builder(this, AppConfig.Companion.CHANNEL_ID)
-                    .setLargeIcon(imageLoader.getBitmap(imageUrl))
                     .setContentTitle(intent.getStringExtra(AppConfig.Companion.NOTIFICATION_TITLE_MOVIE))
                     .setContentText(intent.getStringExtra(AppConfig.Companion.NOTIFICATION_VOTE_AVERAGE_MOVIE) +"/10")
-                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.ic_splash_app)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img_0))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
                     .build();
-            startForeground(101, notification);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+            startForeground(1, notification);
     }
     private void getListReminder(){
         getListReminderUseCase.getListReminder().subscribeOn(Schedulers.io())

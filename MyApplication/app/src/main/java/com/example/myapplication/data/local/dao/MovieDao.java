@@ -22,4 +22,7 @@ public interface MovieDao {
 
     @Query("DELETE FROM movies_result WHERE id = :movieId")
     void deleteMovieById(int movieId);
+
+    @Query("select*from movies_result where title like '%' || :movieName || '%'")
+    Single<List<MovieResults>> searchMovie(String movieName);
 }

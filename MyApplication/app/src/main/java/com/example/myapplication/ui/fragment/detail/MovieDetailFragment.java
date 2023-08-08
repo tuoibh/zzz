@@ -104,7 +104,7 @@ public class MovieDetailFragment extends Fragment {
         binding.txtReminderTime.setOnClickListener(v -> openTimeDialog());
         binding.btnReminderMovie.setOnClickListener(v -> {
             checkPermission(Manifest.permission.POST_NOTIFICATIONS, 1);
-            checkPermission(Manifest.permission.FOREGROUND_SERVICE, 1);
+            checkPermission(Manifest.permission.FOREGROUND_SERVICE, 101);
         });
     }
     @SuppressLint("NewApi")

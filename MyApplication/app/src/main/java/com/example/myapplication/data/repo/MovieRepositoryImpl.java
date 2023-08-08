@@ -79,4 +79,16 @@ public class MovieRepositoryImpl implements MovieRepository {
     public void deleteFavouriteMovieById(int movieId) {
         movieDao.deleteMovieById(movieId);
     }
+
+    @Override
+    public Single<List<MovieResult>> searchMovie(String movieTitle) {
+        ModelMapper modelMapper = new ModelMapper();
+        return movieDao.searchMovie(movieTitle).map(list -> {
+            List<MovieResult> listResult = new ArrayList<>();
+            for(MovieResults item: list){
+                listResult.add(modelMapper.map(item, MovieResult.class));
+            }
+            return listResult;
+        });
+    }
 }

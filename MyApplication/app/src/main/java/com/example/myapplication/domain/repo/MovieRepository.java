@@ -20,4 +20,6 @@ public interface MovieRepository {
     Single<CastNCrewResponse> getCastNCrew(String movieId);
 
     void deleteFavouriteMovieById(int movieId);
+
+    Single<List<MovieResult>> searchMovie(String movieTitle);
 }

@@ -59,7 +59,10 @@ public class AllReminderFragment extends Fragment {
     private void showDialog(int id) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Want to delete this reminder?")
-                .setPositiveButton("Yes", (dialog, which) -> viewModel.deleteReminder(id))
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    viewModel.deleteReminder(id);
+                    activity.getViewModel().getListReminder();
+                })
                 .setNeutralButton("Cancel", (dialog, which) -> Log.d("tbh_", "showDialog: AllReminderFragment")).show();
     }
 

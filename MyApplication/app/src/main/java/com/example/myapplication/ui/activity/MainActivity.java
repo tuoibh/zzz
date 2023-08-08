@@ -15,12 +15,15 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.SearchView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.core.OnSearchViewClickListener;
 import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.model.user.User;
 import com.example.myapplication.databinding.ActivityMainBinding;
@@ -74,6 +77,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerClick();
         setUIDrawer();
         binding.imvGridToolbar.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setCheck(isChecked));
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    public void setSearchUI(OnSearchViewClickListener listener) {
+        binding.svSearchView.setVisibility(View.VISIBLE);
+        binding.svSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                viewModel.searchMovie(query);
+                listener.clickSearchIcon(query);
+                binding.svSearchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                listener.clickCloseSearch();
+//                binding.svSearchView.clearFocus();
+                return false;
+            }
+        });
     }
 
     private void setSpinner() {
@@ -243,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         adapter.notifyDataSetChanged();
     }
     public void uiToolBarHome(){
+        binding.svSearchView.setVisibility(View.GONE);
         binding.imgBack.setVisibility(View.GONE);
         binding.txtTitleScreen.setVisibility(View.GONE);
         binding.imgMenuMain.setVisibility(View.VISIBLE);
@@ -253,6 +278,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
     public void uiToolbarOtherPage(String title){
+        binding.svSearchView.setVisibility(View.GONE);
         binding.imgBack.setVisibility(View.GONE);
         binding.spinnerTopic.setVisibility(View.GONE);
         binding.imvGridToolbar.setVisibility(View.GONE);
@@ -264,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
     public void uiToolbarDetail(String movieTitle){
+        binding.svSearchView.setVisibility(View.GONE);
         binding.spinnerTopic.setVisibility(View.GONE);
         binding.imvGridToolbar.setVisibility(View.GONE);
         binding.imvMoreToolbar.setVisibility(View.GONE);

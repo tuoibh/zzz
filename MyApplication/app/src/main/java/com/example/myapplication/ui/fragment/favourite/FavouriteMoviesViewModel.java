@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.domain.usecase.movielocal.DeleteMovieInLocalUseCase;
 import com.example.myapplication.domain.usecase.listmovie.GetListMoviesUseCase;
+import com.example.myapplication.domain.usecase.movielocal.SearchMovieUseCase;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ public class FavouriteMoviesViewModel extends ViewModel {
     GetListMoviesUseCase getListMoviesUseCase;
     @Inject
     DeleteMovieInLocalUseCase deleteMovieInLocalUseCase;
+    @Inject
+    SearchMovieUseCase searchMovieUseCase;
 
     @Inject
     public FavouriteMoviesViewModel(GetListMoviesUseCase getListMoviesUseCase) {
@@ -34,13 +37,15 @@ public class FavouriteMoviesViewModel extends ViewModel {
     private final MutableLiveData<List<MovieResult>> ldListMovieLocal = new MutableLiveData<>();
     public LiveData<List<MovieResult>> mLdListMovieLocal = ldListMovieLocal;
 
+    private final MutableLiveData<List<MovieResult>> ldListSearchMovie = new MutableLiveData<>();
+    public LiveData<List<MovieResult>> mLdListSearchMovie = ldListSearchMovie;
+
     public void getListFavouriteMovie(){
         Thread thread = new Thread(() -> getListMoviesUseCase.getListMovieLocal().subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<MovieResult>>() {
                     @Override
-                    public void onSubscribe(@NonNull Disposable d) {
-                    }
+                    public void onSubscribe(@NonNull Disposable d) { }
 
                     @Override
                     public void onSuccess(@NonNull List<MovieResult> movieResults) {
@@ -56,13 +61,28 @@ public class FavouriteMoviesViewModel extends ViewModel {
     }
 
     public void deleteFavouriteMovie(int movieId){
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                deleteMovieInLocalUseCase.deleteFavouriteMovie(movieId);
-                getListFavouriteMovie();
-            }
+        Thread thread = new Thread(() -> {
+            deleteMovieInLocalUseCase.deleteFavouriteMovie(movieId);
+            getListFavouriteMovie();
         });
+        thread.start();
+    }
+
+    public void searchMovie(String movieTitle){
+        Thread thread = new Thread(() -> searchMovieUseCase.searchMovieLocal(movieTitle).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new SingleObserver<List<MovieResult>>() {
+                @Override
+                public void onSubscribe(@NonNull Disposable d) {}
+                @Override
+                public void onSuccess(@NonNull List<MovieResult> movieResults) {
+                    ldListSearchMovie.postValue(movieResults);
+                }
+                @Override
+                public void onError(@NonNull Throwable e) {
+                    e.printStackTrace();
+                }
+            }));
         thread.start();
     }
 }
