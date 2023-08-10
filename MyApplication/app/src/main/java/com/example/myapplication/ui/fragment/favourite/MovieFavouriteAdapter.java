@@ -2,6 +2,7 @@ package com.example.myapplication.ui.fragment.favourite;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -19,10 +20,11 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
     List<MovieResult> listMovie;
     OnItemMovieClickListener listener;
 
-    public void setListMovie(List<MovieResult> listMovie){
+    public void setListMovie(List<MovieResult> listMovie) {
         this.listMovie = listMovie;
         notifyDataSetChanged();
     }
+
     public MovieFavouriteAdapter(List<MovieResult> listMovie, OnItemMovieClickListener listener) {
         this.listMovie = listMovie;
         this.listener = listener;
@@ -38,16 +40,16 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MovieHolderItem holder, @SuppressLint("RecyclerView") int position) {
-            Glide.with(holder.binding.getRoot())
-                    .load(listMovie.get(position)
-                            .getPosterPath())
-                    .placeholder(R.drawable.ic_splash_app)
-                    .into(holder.binding.imvMovieImage);
+        holder.binding.imvStarFavorite.setImageResource(R.drawable.ic_star_fill);
+        Glide.with(holder.binding.getRoot())
+                .load(listMovie.get(position)
+                        .getPosterPath())
+                .placeholder(R.drawable.ic_splash_app)
+                .into(holder.binding.imvMovieImage);
         holder.binding.txtMovieName.setText(listMovie.get(position).getTitle());
         holder.binding.txtOverviewDescription.setText(listMovie.get(position).getOverview());
         holder.binding.txtReleaseDateText.setText(listMovie.get(position).getReleaseDate());
-        holder.binding.txtRatingText.setText(listMovie.get(position).getVoteAverage()+"/10");
-        holder.binding.imvStarFavorite.setChecked(true);
+        holder.binding.txtRatingText.setText(listMovie.get(position).getVoteAverage() + "/10");
         holder.onFavouriteClick(listener, position);
         holder.onClickItem(listener, position);
     }
@@ -64,12 +66,13 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
             super(binding.getRoot());
             this.binding = binding;
         }
-        public void onClickItem(OnItemMovieClickListener listener, int position){
+
+        public void onClickItem(OnItemMovieClickListener listener, int position) {
             itemView.setOnClickListener(v -> listener.onItemClick(v, position));
         }
-        public void onFavouriteClick(OnItemMovieClickListener listener, int position){
-            binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) ->
-                    listener.onFavouriteClick(buttonView, isChecked, position));
+
+        public void onFavouriteClick(OnItemMovieClickListener listener, int position) {
+            binding.imvStarFavorite.setOnClickListener(v -> listener.onFavouriteClick(binding.imvStarFavorite, position));
         }
     }
 }

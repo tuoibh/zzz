@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -76,14 +77,14 @@ public class FavouriteMoviesFragment extends Fragment {
                 }
 
                 @Override
-                public void onFavouriteClick(View view, boolean isCheck, int position) {
-                    if(!isCheck){
-                        viewModel.deleteFavouriteMovie(movieResults.get(position).getId());
-                    }
+                public void onFavouriteClick(ImageView view, int position) {
+                    viewModel.deleteFavouriteMovie(movieResults.get(position).getId());
                 }
 
                 @Override
-                public void onChangeFavouriteState(CheckBox view, int position) {}
+                public void onChangeFavouriteState(ImageView view, int position) {
+
+                }
             });
             adapter.notifyDataSetChanged();
             binding.rcvFavouriteMovies.setAdapter(adapter);

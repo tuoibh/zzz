@@ -73,7 +73,7 @@ public class MainViewModel extends ViewModel {
     }
     public void getTopic(){
         Topic topic = listTopic.get(0);
-        String str = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC);
+        String str = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC, AppConfig.Companion.POPULAR);
         for(Topic item: listTopic){
             if(item.key.equals(str)){
                 topic = item;

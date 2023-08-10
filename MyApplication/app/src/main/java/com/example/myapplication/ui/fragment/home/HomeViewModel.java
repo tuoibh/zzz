@@ -142,17 +142,8 @@ public class HomeViewModel extends ViewModel {
         }
     }
 
-    public void getAllSharedSettingInfo(){
-        String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC);
-        float point = getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT);
-        String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT);
-        int year = getSettingsInforSharedPreferenceUseCase.getInt(AppConfig.Companion.KEY_YEAR);
-        ldSettingInfo.postValue(new SettingInfo(topicKey, point, keySort, year));
-//        SettingInfo(topicKey, point, keySort, year);
-    }
-
     public void getKeyTopicSharedPreferences() {
-        String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC);
+        String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC, AppConfig.Companion.POPULAR);
         ldFilterTopic.postValue(topicKey);
     }
 
@@ -162,7 +153,7 @@ public class HomeViewModel extends ViewModel {
     }
 
     public void getKeySortSharedPreferences() {
-        String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT);
+        String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT, "");
         ldSortBy.postValue(keySort);
     }
 

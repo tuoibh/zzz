@@ -32,8 +32,8 @@ public class SettingInfoRepositoryImpl implements SettingInfoRepository {
     }
 
     @Override
-    public String getStringSharedPreferences(String key) {
-        return sharedPreferences.getString(key, "");
+    public String getStringSharedPreferences(String key, String defValue) {
+        return sharedPreferences.getString(key, defValue);
     }
 
     @Override

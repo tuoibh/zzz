@@ -15,9 +15,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:background="@color/color_main"
             android:minHeight="?attr/actionBarSize"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" >
@@ -48,14 +48,6 @@
                 android:textSize="18sp"
                 android:textColor="@color/white"
                 android:text="title_screen"/>
-
-            <SearchView
-                android:id="@+id/sv_search_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:searchIcon="@drawable/ic_search"
-                android:closeIcon="@drawable/ic_close"
-                android:visibility="gone"/>
             <ImageView
                 android:id="@+id/imv_more_toolbar"
                 android:layout_width="wrap_content"
@@ -78,6 +70,16 @@
                 android:button="@drawable/slt_layout_manager"
                 android:buttonTint="@color/white"
                 android:layout_gravity="end"/>
+
+            <SearchView
+                android:id="@+id/sv_search_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:visibility="gone"
+                android:searchIcon="@drawable/ic_search"
+                android:closeIcon="@drawable/ic_close"/>
+
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.viewpager2.widget.ViewPager2

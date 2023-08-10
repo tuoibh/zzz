@@ -93,13 +93,7 @@ public class MovieDetailFragment extends Fragment {
             adapter.notifyDataSetChanged();
             binding.rcvCastNCrew.setAdapter(adapter);
         });
-        binding.imvIsFavourite.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if(binding.imvIsFavourite.isChecked()){
-                viewModel.addFavouriteMovie(args.getMovieResult());
-            } else {
-                viewModel.deleteFavourite(args.getMovieId());
-            }
-        });
+        setFavourite();
         binding.txtReminderDate.setOnClickListener(v -> openDateDialog());
         binding.txtReminderTime.setOnClickListener(v -> openTimeDialog());
         binding.btnReminderMovie.setOnClickListener(v -> {
@@ -107,6 +101,17 @@ public class MovieDetailFragment extends Fragment {
             checkPermission(Manifest.permission.FOREGROUND_SERVICE, 101);
         });
     }
+
+    private void setFavourite() {
+        binding.imvIsFavourite.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(binding.imvIsFavourite.isChecked()){
+                viewModel.addFavouriteMovie(args.getMovieResult());
+            } else {
+                viewModel.deleteFavourite(args.getMovieId());
+            }
+        });
+    }
+
     @SuppressLint("NewApi")
     private boolean isPossibleToReminder(String date, String time) {
         if(date.compareTo(viewModel.getCurrentDate())<0){

@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +22,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
+import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.core.OnItemMovieClickListener;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.domain.model.movie.Topic;
@@ -39,7 +42,7 @@ public class HomeMoviesFragment extends Fragment {
     private boolean isRefresh = true;
     private MovieAdapter adapter;
     int lastVisibleItemPosition;
-    private String keySort;
+    private String keySort = "";
     private Topic sharedTopic;
     private int year;
     private float point;
@@ -70,6 +73,43 @@ public class HomeMoviesFragment extends Fragment {
         viewModel.getListMovieLocal();
         getListMovieRemote();
 
+        viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {
+            listLocal = list;
+            if(adapter != null) adapter.setLdListMovie(listRemote, listLocal);
+            activity.setBadgeTextFavourite(list.size());
+        });
+        viewModel.mLdFilterTopic.observe(requireActivity(), s -> {
+            if (!s.isEmpty()) {
+                activity.setUISpinner(s);
+            }
+        });
+        viewModel.mLdYear.observe(requireActivity(), integer -> year = integer);
+        viewModel.mLdSortBy.observe(requireActivity(), s -> keySort = s);
+        viewModel.mLdFilterPoint.observe(requireActivity(), aFloat -> point = aFloat );
+        activity.getViewModel().mTopicState.observe(requireActivity(), topic -> {
+            sharedTopic = topic;
+            viewModel.getAllMovieByTopic(topic.key, point, keySort, year, currentLoadPage);
+        });
+        viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
+            if (isRefresh) {
+                listRemote.clear();
+                listRemote.addAll(movieResponse);
+                isRefresh = false;
+                binding.swipeRefreshLayout.setRefreshing(false);
+            } else if (isLoadingMore) {
+                listRemote.addAll(movieResponse);
+                isLoadingMore = false;
+            } else {
+                listRemote.clear();
+                listRemote.addAll(movieResponse);
+            }
+            if (adapter != null) adapter.setLdListMovie(listRemote, listLocal);
+            if(movieResponse.isEmpty()){
+                binding.txtNothing.setVisibility(View.VISIBLE);
+            } else {
+                binding.txtNothing.setVisibility(View.GONE);
+            }
+        });
         // refresh
         binding.swipeRefreshLayout.setOnRefreshListener(() -> {
             isRefresh = true;
@@ -81,23 +121,6 @@ public class HomeMoviesFragment extends Fragment {
             }, 1000);
         });
 
-        viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
-            if (isRefresh) {
-                listRemote.clear();
-                listRemote.addAll(movieResponse);
-                isRefresh = false;
-                binding.swipeRefreshLayout.setRefreshing(false);
-            } else if (isLoadingMore) {
-                listRemote.addAll(movieResponse);
-                isLoadingMore = false;
-            }
-            if (adapter != null) adapter.setLdListMovie(listRemote, listLocal);
-            if(movieResponse.isEmpty()){
-                binding.txtNothing.setVisibility(View.VISIBLE);
-            } else {
-                binding.txtNothing.setVisibility(View.GONE);
-            }
-        });
         adapter = new MovieAdapter(viewModel.imageLoader, listRemote, listLocal, new OnItemMovieClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -110,17 +133,21 @@ public class HomeMoviesFragment extends Fragment {
             };
 
             @Override
-            public void onFavouriteClick(View view, boolean isCheck, int position) {
-                if(isCheck){
-                    viewModel.addMovieToFavourite(listRemote.get(position));
-                } else{
+            public void onFavouriteClick(ImageView view, int position) {
+                boolean isFavourite = viewModel.isFavouriteMovie(listRemote.get(position).getId(), listLocal);
+                if(isFavourite){
+                    view.setImageResource(R.drawable.ic_star_outline);
                     viewModel.deleteMovieFavourite(listRemote.get(position).getId());
+                } else {
+                    view.setImageResource(R.drawable.ic_star_fill);
+                    viewModel.addMovieToFavourite(listRemote.get(position));
                 }
             }
 
             @Override
-            public void onChangeFavouriteState(CheckBox view, int position) {
-                view.setChecked(viewModel.isFavouriteMovie(listRemote.get(position).getId(), listLocal));
+            public void onChangeFavouriteState(ImageView view, int position) {
+                view.setImageResource(viewModel.isFavouriteMovie(listRemote.get(position).getId(), listLocal)?
+                        R.drawable.ic_star_fill: R.drawable.ic_star_outline);
             }
         });
         activity.getViewModel().mIsCheck.observe(requireActivity(), isGrid -> {
@@ -160,39 +187,19 @@ public class HomeMoviesFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void getListMovieRemote(){
         // get list local
         viewModel.getListMovieLocal();
-        viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {
-            listLocal = list;
-            if(adapter != null) adapter.setLdListMovie(listRemote, listLocal);
-            activity.setBadgeTextFavourite(list.size());
-        });
         // get all info in sharedPreference
         //topic
         viewModel.getKeyTopicSharedPreferences();
-        viewModel.mLdFilterTopic.observe(requireActivity(), s -> {
-            if (!s.isEmpty()) {
-                activity.setUISpinner(s);
-            }
-        });
         //year
         viewModel.getYearSharedPreferences();
-        viewModel.mLdYear.observe(requireActivity(), integer -> year = integer);
         //sort by
         viewModel.getKeySortSharedPreferences();
-        viewModel.mLdSortBy.observe(requireActivity(), s -> keySort = s);
         //point & get local
         viewModel.getPointSharedPreferences();
-        viewModel.mLdFilterPoint.observe(requireActivity(), aFloat ->
-            {
-                point = aFloat;
-                activity.getViewModel().mTopicState.observe(requireActivity(), topic -> {
-                    sharedTopic = topic;
-                    viewModel.getAllMovieByTopic(topic.key, aFloat, keySort, year, currentLoadPage);
-                });
-            }
-        );
     }
     @Override
     public void onResume() {

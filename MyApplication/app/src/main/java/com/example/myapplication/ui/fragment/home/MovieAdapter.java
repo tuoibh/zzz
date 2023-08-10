@@ -1,6 +1,8 @@
 package com.example.myapplication.ui.fragment.home;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -38,10 +40,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if (listMovie != null && listMovie.size() >= 19 && position == listMovie.size() - 1) {
+        if (listMovie != null && !listMovie.isEmpty() && position == listMovie.size() - 1) {
             return TYPE_LOADING;
         }
-        if(isGrid) return TYPE_GRID_ITEM;
+        if (isGrid) return TYPE_GRID_ITEM;
         return TYPE_LINEAR_ITEM;
     }
 
@@ -112,6 +114,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
 
     public void removeLoadingItem() {
+        if (listMovie == null || listMovie.isEmpty()) {
+            return;
+        }
         int position = listMovie.size() - 1;
         MovieResult movieResult = listMovie.get(position);
         if (movieResult != null) {
@@ -135,8 +140,10 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         public void onFavouriteItemClick(OnItemMovieClickListener listener, int position) {
-            binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) ->
-                    listener.onFavouriteClick(buttonView, isChecked, position));
+//            binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) ->{
+//                listener.onFavouriteClick(buttonView, isChecked, position);
+//            });
+            binding.imvStarFavorite.setOnClickListener(v -> listener.onFavouriteClick(binding.imvStarFavorite, position));
         }
 
         public void onSetFavouriteState(OnItemMovieClickListener listener, int position) {

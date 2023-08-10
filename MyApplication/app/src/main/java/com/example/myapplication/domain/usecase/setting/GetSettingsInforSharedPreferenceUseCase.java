@@ -10,8 +10,8 @@ public class GetSettingsInforSharedPreferenceUseCase {
     public GetSettingsInforSharedPreferenceUseCase(SettingInfoRepository settingInfoRepository) {
         this.settingInfoRepository = settingInfoRepository;
     }
-    public String getString(String key){
-        return settingInfoRepository.getStringSharedPreferences(key);
+    public String getString(String key, String defValue){
+        return settingInfoRepository.getStringSharedPreferences(key, defValue);
     }
 
     public float getFloat(String key){
