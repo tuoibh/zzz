@@ -1,13 +1,10 @@
 package com.example.myapplication.di;
 
 import static com.example.myapplication.core.AppConfig.Companion.BASE_URL;
-
 import com.example.myapplication.data.remote.MovieApi;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;

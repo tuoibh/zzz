@@ -22,8 +22,7 @@ public class BelongsToCollection {
 		return posterPath;
 	}
 
-	public BelongsToCollection() {
-	}
+	public BelongsToCollection() {}
 
 	public void setBackdropPath(String backdropPath) {
 		this.backdropPath = backdropPath;

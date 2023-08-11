@@ -3,11 +3,8 @@ package com.example.myapplication.domain.model.movie;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-
 import androidx.annotation.NonNull;
-
 import com.example.myapplication.core.AppConfig;
-
 import java.util.List;
 
 public class MovieResult implements Parcelable {

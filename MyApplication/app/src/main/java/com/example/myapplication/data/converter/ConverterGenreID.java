@@ -3,7 +3,6 @@ package com.example.myapplication.data.converter;
 import androidx.annotation.NonNull;
 import androidx.room.ProvidedTypeConverter;
 import androidx.room.TypeConverter;
-
 import java.util.ArrayList;
 import java.util.List;
 

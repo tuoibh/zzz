@@ -1,32 +1,20 @@
 package com.example.myapplication.data.repo;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.myapplication.R;
 import com.example.myapplication.domain.repo.ImageLoader;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-
 import javax.inject.Inject;
-
 import dagger.hilt.android.qualifiers.ApplicationContext;
-import retrofit2.http.Url;
 
 public class ImageLoaderImpl implements ImageLoader {
-
     private final @ApplicationContext Context context;
 
     @Inject

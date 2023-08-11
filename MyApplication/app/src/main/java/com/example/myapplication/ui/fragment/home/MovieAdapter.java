@@ -85,6 +85,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 linearItem.binding.txtOverviewDescription.setText(listMovie.get(position).getOverview());
                 linearItem.binding.txtReleaseDateText.setText(listMovie.get(position).getReleaseDate());
                 linearItem.binding.txtRatingText.setText(listMovie.get(position).getVoteAverage() + "/10");
+                if(listMovie.get(position).isAdult()) linearItem.binding.imvAdult.setVisibility(View.VISIBLE);
                 linearItem.onClickItem(listener, position);
                 linearItem.onFavouriteItemClick(listener, position);
                 linearItem.onSetFavouriteState(listener, position);

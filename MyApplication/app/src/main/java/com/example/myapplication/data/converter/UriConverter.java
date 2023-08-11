@@ -1,7 +1,6 @@
 package com.example.myapplication.data.converter;
 
 import android.net.Uri;
-
 import androidx.room.ProvidedTypeConverter;
 import androidx.room.TypeConverter;
 

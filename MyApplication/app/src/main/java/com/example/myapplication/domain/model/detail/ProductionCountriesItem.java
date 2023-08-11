@@ -12,8 +12,7 @@ public class ProductionCountriesItem {
 		return name;
 	}
 
-	public ProductionCountriesItem() {
-	}
+	public ProductionCountriesItem() {}
 
 	public void setIso31661(String iso31661) {
 		this.iso31661 = iso31661;

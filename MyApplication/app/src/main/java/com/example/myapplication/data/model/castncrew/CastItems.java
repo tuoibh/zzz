@@ -1,5 +1,7 @@
 package com.example.myapplication.data.model.castncrew;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -107,6 +109,7 @@ public class CastItems {
 		this.order = order;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "CastItems{" +

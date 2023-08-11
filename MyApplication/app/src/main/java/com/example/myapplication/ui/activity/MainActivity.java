@@ -1,62 +1,45 @@
 package com.example.myapplication.ui.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
+import android.widget.PopupMenu;
 import android.widget.SearchView;
-
 import com.example.myapplication.R;
 import com.example.myapplication.core.OnSearchViewClickListener;
 import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.model.user.User;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.domain.model.movie.Topic;
-import com.example.myapplication.ui.adapter.AppPagerAdapter;
-import com.example.myapplication.ui.fragment.about.AboutFragment;
-import com.example.myapplication.ui.fragment.favourite.FavouriteMoviesFragment;
-import com.example.myapplication.ui.fragment.home.HomeMoviesFragment;
 import com.example.myapplication.ui.fragment.profile.editprofile.EditProfileFragment;
 import com.example.myapplication.ui.fragment.reminder.AllReminderFragment;
-import com.example.myapplication.ui.fragment.settings.SettingsFragment;
 import com.google.android.material.badge.BadgeDrawable;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
-
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     private ActivityMainBinding binding;
-    private NavController navController;
-    private Toolbar toolbar;
     public MainViewModel getViewModel() {
         return viewModel;
     }
     private MainViewModel viewModel;
     private ArrayAdapter<Topic> adapter;
-    private List<Fragment> listFragment = new ArrayList<>();
     private DrawerReminderAdapter reminderAdapter;
+    private int currentLoadPage = 1;
 
     @SuppressLint("CommitPrefEdits")
     @Override
@@ -64,13 +47,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        //nav viewpager
-//        setViewPager();
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
-        navController = navHostFragment.getNavController();
-        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
+        NavController navController = navHostFragment.getNavController();
+        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
+
         viewModel.createListTopic();
         setSpinner();
         viewModel.getTopic();
@@ -79,6 +61,40 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerClick();
         setUIDrawer();
         binding.imvGridToolbar.setOnCheckedChangeListener((buttonView, isChecked) -> viewModel.setCheck(isChecked));
+        binding.svSearchView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (Math.abs(right - left) <= 144) binding.txtTitleScreen.setVisibility(View.VISIBLE);
+            else binding.txtTitleScreen.setVisibility(View.GONE);
+        });
+        binding.svSearchView.setOnClickListener(v -> binding.txtTitleScreen.setVisibility(View.GONE));
+        binding.imvMoreToolbar.setOnClickListener(v -> showPopUpMenu(v));
+    }
+
+    private void showPopUpMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.bottom_nav);
+        popupMenu.show();
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.homeMoviesFragment:
+                binding.bottomNavigationView.setSelectedItemId(R.id.homeMoviesFragment);
+                return true;
+            case R.id.favouriteMoviesFragment:
+                binding.bottomNavigationView.setSelectedItemId(R.id.favouriteMoviesFragment);
+                return true;
+            case R.id.settingsFragment:
+                binding.bottomNavigationView.setSelectedItemId(R.id.settingsFragment);
+                return true;
+            case R.id.aboutFragment:
+                binding.bottomNavigationView.setSelectedItemId(R.id.aboutFragment);
+                return true;
+            default:
+                return false;
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -96,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public boolean onQueryTextChange(String newText) {
                 listener.clickCloseSearch();
-//                binding.svSearchView.clearFocus();
                 return false;
             }
         });
@@ -105,21 +120,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void setSpinner() {
         binding.spinnerTopic.setOnItemSelectedListener(this);
         adapter = new ArrayAdapter<>(this, R.layout.item_spinner, viewModel.listTopic);
-        adapter.setDropDownViewResource(
-                android.R.layout
-                        .simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerTopic.setAdapter(adapter);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         viewModel.updateTopic(viewModel.listTopic.get(position));
-        viewModel.mTopicState.observe(this, new Observer<Topic>() {
-            @Override
-            public void onChanged(Topic topic) {
-                Log.d("tbh_", "onChanged: MainActivity"+ topic.value);
-            }
-        });
     }
 
     @Override
@@ -136,103 +143,45 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onResume();
     }
 
-    public void setUISpinner(String topicKey){
-        for(Topic item: viewModel.listTopic){
-            if(item.key.equals(topicKey)){
+    public void setUISpinner(String topicKey) {
+        for (Topic item : viewModel.listTopic) {
+            if (item.key.equals(topicKey)) {
                 binding.spinnerTopic.setSelection(adapter.getPosition(item));
             }
         }
     }
 
-    private void setViewPager()
-    {
-        setListFragment();
-
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container_view);
-        navController = navHostFragment.getNavController();
-        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
-
-        binding.viewPager.setAdapter(new AppPagerAdapter(this, listFragment));
-        Navigation.setViewNavController(binding.viewPager, navController);
-        NavigationUI.setupWithNavController(binding.bottomNavigationView, navController);
-        binding.viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                switch (position){
-                    case 0:
-                        binding.bottomNavigationView.setSelectedItemId(R.id.homeMoviesFragment);
-                        break;
-                    case 1:
-                        binding.bottomNavigationView.setSelectedItemId(R.id.favouriteMoviesFragment);
-                        break;
-                    case 2:
-                        binding.bottomNavigationView.setSelectedItemId(R.id.settingsFragment);
-                        break;
-                    case 3:
-                        binding.bottomNavigationView.setSelectedItemId(R.id.aboutFragment);
-                }
-            }
-        });
-
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()){
-                case R.id.homeMoviesFragment:
-                    binding.viewPager.setCurrentItem(0);
-                    break;
-                case R.id.favouriteMoviesFragment:
-                    binding.viewPager.setCurrentItem(1);
-                    break;
-                case R.id.settingsFragment:
-                    binding.viewPager.setCurrentItem(2);
-                    break;
-                case R.id.aboutFragment:
-                    binding.viewPager.setCurrentItem(3);
-                    break;
-            }
-            return true;
-        });
-    }
-
-    private void setListFragment() {
-        listFragment.add(new HomeMoviesFragment());
-        listFragment.add(new FavouriteMoviesFragment());
-        listFragment.add(new SettingsFragment());
-        listFragment.add(new AboutFragment());
-    }
-
-    public void setBadgeTextFavourite(int num){
+    public void setBadgeTextFavourite(int num) {
         BadgeDrawable badgeDrawable = binding.bottomNavigationView.getOrCreateBadge(R.id.favouriteMoviesFragment);
         badgeDrawable.setVerticalOffset(Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, this.getResources().getDisplayMetrics())));
         badgeDrawable.setBadgeTextColor(Color.WHITE);
         badgeDrawable.setNumber(num);
         badgeDrawable.setBackgroundColor(Color.BLACK);
-        if(num >0) badgeDrawable.setVisible(true);
-        else badgeDrawable.setVisible(false);
+        badgeDrawable.setVisible(num > 0);
     }
 
     @Override
     public void onBackPressed() {
-        if(binding.drawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             closeDrawer();
         } else {
             super.onBackPressed();
         }
     }
 
-    private void drawerClick(){
+    private void drawerClick() {
         binding.layoutProfile.btnEditProfile.setOnClickListener(v -> openScreenFromDrawer(new EditProfileFragment()));
         binding.layoutProfile.btnShowAll.setOnClickListener(v -> openScreenFromDrawer(new AllReminderFragment()));
     }
-    private void openScreenFromDrawer(Fragment fragment){
+
+    private void openScreenFromDrawer(Fragment fragment) {
         closeDrawer();
         androidx.fragment.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container_view, fragment)
-                .addToBackStack(null);
+        fragmentTransaction.replace(R.id.fragment_container_view, fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
 
-    public void settingUIScreenFromDrawer(String title, boolean isToolbarOff){
+    public void settingUIScreenFromDrawer(String title, boolean isToolbarOff) {
         closeDrawer();
         binding.spinnerTopic.setVisibility(View.GONE);
         binding.imvGridToolbar.setVisibility(View.GONE);
@@ -242,14 +191,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.txtTitleScreen.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setText(title);
         binding.bottomNavigationView.setVisibility(View.GONE);
-        if(isToolbarOff) binding.toolbar.setVisibility(View.GONE);
+        if (isToolbarOff) binding.toolbar.setVisibility(View.GONE);
     }
 
-    private void closeDrawer(){
+    private void closeDrawer() {
         binding.drawerLayout.close();
     }
 
-    public void setUIDrawer(User user){
+    public void setUIDrawer(User user) {
         binding.layoutProfile.imvUserImage.setImageURI(user.getUri());
         binding.layoutProfile.txtUserFullname.setText(user.getName());
         binding.layoutProfile.txtUserMail.setText(user.getEmail());
@@ -257,56 +206,66 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.layoutProfile.txtUserGender.setText(user.getGender());
     }
 
-    public void setUIDrawer(){
+    public void setUIDrawer() {
         setUIDrawer(viewModel.getUser(getPackageName()));
         setRcvReminder();
     }
+
     private void setRcvReminder() {
         viewModel.getListReminder();
-        List<Reminder> reminderList  = new ArrayList<>();
+        List<Reminder> reminderList = new ArrayList<>();
         viewModel.mLdReminder.observe(this, reminders -> {
             reminderList.addAll(reminders);
-            if(reminders.isEmpty()) binding.layoutProfile.txtReminderEmpty.setVisibility(View.VISIBLE);
+            if (reminders.isEmpty())
+                binding.layoutProfile.txtReminderEmpty.setVisibility(View.VISIBLE);
             else binding.layoutProfile.txtReminderEmpty.setVisibility(View.GONE);
-            if(reminderAdapter != null) reminderAdapter.setLdListMovie(reminders);
+            if (reminderAdapter != null) reminderAdapter.setLdListMovie(reminders);
         });
         reminderAdapter = new DrawerReminderAdapter(reminderList);
         binding.layoutProfile.rcvReminder.setAdapter(reminderAdapter);
         adapter.notifyDataSetChanged();
     }
-    public void uiToolBarHome(){
+
+    public void uiToolBarHome() {
         binding.svSearchView.setVisibility(View.GONE);
         binding.imgBack.setVisibility(View.GONE);
         binding.txtTitleScreen.setVisibility(View.GONE);
         binding.imgMenuMain.setVisibility(View.VISIBLE);
         binding.spinnerTopic.setVisibility(View.VISIBLE);
         binding.imvGridToolbar.setVisibility(View.VISIBLE);
-        binding.imvMoreToolbar.setVisibility(View.VISIBLE);
         binding.toolbar.setVisibility(View.VISIBLE);
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
-    public void uiToolbarOtherPage(String title){
+
+    public void uiToolbarOtherPage(String title) {
         binding.svSearchView.setVisibility(View.GONE);
         binding.imgBack.setVisibility(View.GONE);
         binding.spinnerTopic.setVisibility(View.GONE);
         binding.imvGridToolbar.setVisibility(View.GONE);
-        binding.imvMoreToolbar.setVisibility(View.GONE);
         binding.imgMenuMain.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setText(title);
         binding.toolbar.setVisibility(View.VISIBLE);
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
-    public void uiToolbarDetail(String movieTitle){
+
+    public void uiToolbarDetail(String movieTitle) {
         binding.svSearchView.setVisibility(View.GONE);
         binding.spinnerTopic.setVisibility(View.GONE);
         binding.imvGridToolbar.setVisibility(View.GONE);
-        binding.imvMoreToolbar.setVisibility(View.GONE);
         binding.imgMenuMain.setVisibility(View.GONE);
         binding.imgBack.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setText(movieTitle);
         binding.toolbar.setVisibility(View.VISIBLE);
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
+    }
+
+    public int getCurrentLoadPage() {
+        return currentLoadPage;
+    }
+
+    public void setCurrentLoadPage(int currentLoadPage) {
+        this.currentLoadPage = currentLoadPage;
     }
 }

@@ -1,8 +1,8 @@
 package com.example.myapplication.data.model.movie;
 
+import androidx.annotation.NonNull;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class MovieResponses {
@@ -43,14 +43,14 @@ public class MovieResponses {
         this.totalResults = totalResults;
     }
 
+    @NonNull
     @Override
     public String toString() {
-        return
-                "Response{" +
-                        "page = '" + page + '\'' +
-                        ",total_pages = '" + totalPages + '\'' +
-                        ",results = '" + results + '\'' +
-                        ",total_results = '" + totalResults + '\'' +
-                        "}";
+        return "Response{" +
+            "page = '" + page + '\'' +
+            ",total_pages = '" + totalPages + '\'' +
+            ",results = '" + results + '\'' +
+            ",total_results = '" + totalResults + '\'' +
+            "}";
     }
 }

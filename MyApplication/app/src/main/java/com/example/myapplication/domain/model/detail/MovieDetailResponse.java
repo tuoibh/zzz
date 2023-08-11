@@ -1,7 +1,6 @@
 package com.example.myapplication.domain.model.detail;
 
 import com.example.myapplication.core.AppConfig;
-
 import java.util.List;
 
 public class MovieDetailResponse {
@@ -241,8 +240,7 @@ public class MovieDetailResponse {
 		this.status = status;
 	}
 
-	public MovieDetailResponse() {
-	}
+	public MovieDetailResponse() {}
 
 	public MovieDetailResponse(String originalLanguage, String imdbId, boolean video, String title, String backdropPath, int revenue, List<GenresItem> genres, Object popularity, List<ProductionCountriesItem> productionCountries, int id, int voteCount, int budget, String overview, String originalTitle, int runtime, String posterPath, List<SpokenLanguagesItem> spokenLanguages, List<ProductionCompaniesItem> productionCompanies, String releaseDate, Object voteAverage, BelongsToCollection belongsToCollection, String tagline, boolean adult, String homepage, String status, boolean isFavoutite) {
 		this.originalLanguage = originalLanguage;

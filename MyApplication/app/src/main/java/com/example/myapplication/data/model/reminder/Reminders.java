@@ -1,5 +1,6 @@
 package com.example.myapplication.data.model.reminder;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -53,8 +54,7 @@ public class Reminders {
         this.timeReminder = timeReminder;
     }
 
-    public Reminders() {
-    }
+    public Reminders() {}
 
     public Reminders(int movieId, String movieName, String posterUrl, String voteAverage, String dateReminder, String timeReminder) {
         this.movieId = movieId;
@@ -65,6 +65,7 @@ public class Reminders {
         this.timeReminder = timeReminder;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Reminders{" +

@@ -1,11 +1,7 @@
 package com.example.myapplication.data.repo;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.util.Log;
-
 import com.example.myapplication.domain.repo.SettingInfoRepository;
-
 import javax.inject.Inject;
 
 public class SettingInfoRepositoryImpl implements SettingInfoRepository {

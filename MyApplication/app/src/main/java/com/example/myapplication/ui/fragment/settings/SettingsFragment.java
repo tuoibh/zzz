@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.fragment.settings;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -49,12 +50,17 @@ public class SettingsFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         activity.uiToolbarOtherPage("Settings");
-        viewModel.mLdMoviePoint.observe(requireActivity(), integer -> binding.txtRateFromText.setText(integer + ""));
+        binding.txtTitleSettingLoading.setText("Loading: "+ activity.getCurrentLoadPage());
+        viewModel.mLdMoviePoint.observe(requireActivity(), integer -> {
+            binding.txtRateFromText.setText(integer + "");
+            binding.seekbarMoviePoint.setProgress((int) (integer*10));
+        });
         binding.seekbarMoviePoint.setMax(total_point_movie);
         binding.seekbarMoviePoint.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

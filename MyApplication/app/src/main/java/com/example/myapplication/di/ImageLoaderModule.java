@@ -1,12 +1,9 @@
 package com.example.myapplication.di;
 
 import android.content.Context;
-
 import com.example.myapplication.data.repo.ImageLoaderImpl;
 import com.example.myapplication.domain.repo.ImageLoader;
-
 import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;

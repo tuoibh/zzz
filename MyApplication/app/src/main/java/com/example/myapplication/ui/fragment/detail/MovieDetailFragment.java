@@ -1,27 +1,15 @@
 package com.example.myapplication.ui.fragment.detail;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,20 +17,14 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.App;
-import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.databinding.FragmentMovieDetailBinding;
 import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.domain.model.reminder.Reminder;
-import com.example.myapplication.service.ReminderMovieReceiver;
-import com.example.myapplication.service.ReminderMovieService;
 import com.example.myapplication.ui.activity.MainActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MovieDetailFragment extends Fragment {
@@ -51,7 +33,6 @@ public class MovieDetailFragment extends Fragment {
     MovieDetailViewModel viewModel;
     MovieDetailResponse mMovieDetailResponse;
     MovieDetailFragmentArgs args;
-    private Calendar calendar;
 
     private int year, month, day, hour, minutes;
     @Override

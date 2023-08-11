@@ -17,7 +17,6 @@
             android:id="@+id/imv_movie_image"
             android:layout_width="0dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imv_star_favorite"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

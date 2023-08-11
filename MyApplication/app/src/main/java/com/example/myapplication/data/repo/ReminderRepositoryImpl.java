@@ -4,20 +4,15 @@ import com.example.myapplication.data.local.dao.ReminderDao;
 import com.example.myapplication.data.model.reminder.Reminders;
 import com.example.myapplication.domain.model.reminder.Reminder;
 import com.example.myapplication.domain.repo.ReminderRepository;
-
 import org.modelmapper.ModelMapper;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import io.reactivex.rxjava3.core.Single;
 
 public class ReminderRepositoryImpl implements ReminderRepository {
 
     ReminderDao reminderDao;
-
     @Inject
     public ReminderRepositoryImpl(ReminderDao reminderDao) {
         this.reminderDao = reminderDao;

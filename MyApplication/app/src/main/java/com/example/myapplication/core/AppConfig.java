@@ -1,5 +1,4 @@
 package com.example.myapplication.core;
-
 public interface AppConfig {
     final class Companion{
         public static final String BASE_URL = "https://api.themoviedb.org/3/movie/";

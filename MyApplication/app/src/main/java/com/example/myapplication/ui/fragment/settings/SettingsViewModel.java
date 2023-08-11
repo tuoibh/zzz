@@ -35,7 +35,6 @@ public class SettingsViewModel extends ViewModel {
             try {
                 Thread.sleep(300L);
                 insertSettingsInforSharedPreferenceUseCase.insertFloat(AppConfig.Companion.KEY_POINT, point);
-                Log.d("tbh_", "updateSettingMoviePoint: SettingsViewModel " + getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

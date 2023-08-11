@@ -4,9 +4,7 @@ import com.example.myapplication.data.local.dao.UserDao;
 import com.example.myapplication.data.model.user.Users;
 import com.example.myapplication.domain.repo.UserInfoRepository;
 import com.example.myapplication.domain.model.user.User;
-
 import org.modelmapper.ModelMapper;
-
 import javax.inject.Inject;
 
 public class UserInfoRepositoryImpl implements UserInfoRepository {

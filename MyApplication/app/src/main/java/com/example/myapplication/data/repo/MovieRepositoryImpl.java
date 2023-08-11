@@ -12,15 +12,11 @@ import com.example.myapplication.domain.model.detail.MovieDetailResponse;
 import com.example.myapplication.domain.model.movie.MovieResponse;
 import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.domain.repo.MovieRepository;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Single;
 

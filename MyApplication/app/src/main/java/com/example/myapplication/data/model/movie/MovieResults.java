@@ -1,17 +1,13 @@
 package com.example.myapplication.data.model.movie;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 @Entity(tableName = "movies_result")
 public class MovieResults {
-
 	@SerializedName("overview")
 	@Expose
 	private String overview;
@@ -55,18 +51,12 @@ public class MovieResults {
 	@SerializedName("vote_count")
 	@Expose
 	private int voteCount;
-
-
 	@Expose
 	private boolean isFavourite = false;
 
-	public boolean isFavourite() {
-		return isFavourite;
-	}
+	public boolean isFavourite() {return isFavourite;}
 
-	public void setFavourite(boolean favourite) {
-		isFavourite = favourite;
-	}
+	public void setFavourite(boolean favourite) {isFavourite = favourite;}
 
 	public void setOverview(String overview) {
 		this.overview = overview;
@@ -124,8 +114,7 @@ public class MovieResults {
 		this.voteCount = voteCount;
 	}
 
-	public MovieResults() {
-	}
+	public MovieResults() {}
 
 	public MovieResults(String overview, String originalLanguage, String originalTitle, boolean video, String title, List<Integer> genreIds, String posterPath, String backdropPath, String releaseDate, String popularity, String voteAverage, int id, boolean adult, int voteCount, boolean isFavourite) {
 		this.overview = overview;

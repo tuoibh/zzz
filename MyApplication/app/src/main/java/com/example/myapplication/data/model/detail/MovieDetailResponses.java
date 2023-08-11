@@ -1,8 +1,9 @@
 package com.example.myapplication.data.model.detail;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class MovieDetailResponses {
@@ -225,6 +226,7 @@ public class MovieDetailResponses {
 		this.isFavourite = isFavourite;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "MovieDetailResponses{" +

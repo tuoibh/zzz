@@ -3,7 +3,6 @@ package com.example.myapplication.data.local.db;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
-
 import com.example.myapplication.data.converter.UriConverter;
 import com.example.myapplication.data.local.dao.MovieDao;
 import com.example.myapplication.data.local.dao.ReminderDao;

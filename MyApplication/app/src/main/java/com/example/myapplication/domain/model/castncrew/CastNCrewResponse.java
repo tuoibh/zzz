@@ -1,8 +1,5 @@
 package com.example.myapplication.domain.model.castncrew;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 import java.util.List;
 
 public class CastNCrewResponse {

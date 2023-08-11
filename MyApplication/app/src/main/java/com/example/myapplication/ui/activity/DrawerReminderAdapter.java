@@ -2,14 +2,10 @@ package com.example.myapplication.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.myapplication.databinding.ItemReminderDrawerBinding;
-import com.example.myapplication.domain.model.movie.MovieResult;
 import com.example.myapplication.domain.model.reminder.Reminder;
 
 import java.util.List;

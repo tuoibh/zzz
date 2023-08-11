@@ -1,10 +1,8 @@
 package com.example.myapplication.domain.model.movie;
 
 import com.example.myapplication.data.model.movie.MovieResponses;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
-
 import java.util.List;
 
 public class MovieResponse {
@@ -40,21 +38,13 @@ public class MovieResponse {
     }
 
     @Override
-    public String toString(){
-        return
-                "Response{" +
-                        "page = '" + page + '\'' +
-                        ",total_pages = '" + totalPages + '\'' +
-                        ",results = '" + results + '\'' +
-                        ",total_results = '" + totalResults + '\'' +
-                        "}";
+    public String toString() {
+        return "Response{" + "page = '" + page + '\'' + ",total_pages = '" + totalPages + '\'' + ",results = '" + results + '\'' + ",total_results = '" + totalResults + '\'' + "}";
     }
 
-    public MovieResponses transferFrom(MovieResponse mrp){
+    public MovieResponses transferFrom(MovieResponse mrp) {
         ModelMapper modelMapper = new ModelMapper();
-        modelMapper.getConfiguration()
-                .setFieldMatchingEnabled(true)
-                .setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
+        modelMapper.getConfiguration().setFieldMatchingEnabled(true).setFieldAccessLevel(Configuration.AccessLevel.PRIVATE);
         return modelMapper.map(mrp, MovieResponses.class);
     }
 

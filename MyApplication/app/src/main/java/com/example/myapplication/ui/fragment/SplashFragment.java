@@ -19,6 +19,7 @@ import com.example.myapplication.ui.activity.MainActivity;
 public class SplashFragment extends Fragment {
     FragmentSplashBinding binding;
     MainActivity activity;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,11 +36,6 @@ public class SplashFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                NavHostFragment.findNavController(requireParentFragment()).navigate(R.id.action_splashFragment_to_homeMoviesFragment);
-            }
-        }, 2500);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> NavHostFragment.findNavController(requireParentFragment()).navigate(R.id.action_splashFragment_to_homeMoviesFragment), 2500);
     }
 }

@@ -8,8 +8,19 @@ public class User {
     private String email;
     private String date_of_birth;
     private String gender;
-
     private Uri uri;
+
+    public User() {
+    }
+
+    public User(int id, String name, String email, String date_of_birth, String gender, Uri uri) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.date_of_birth = date_of_birth;
+        this.gender = gender;
+        this.uri = uri;
+    }
 
     public int getId() {
         return id;
@@ -51,18 +62,6 @@ public class User {
         this.gender = gender;
     }
 
-    public User() {
-    }
-
-    public User(int id, String name, String email, String date_of_birth, String gender, Uri uri) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.date_of_birth = date_of_birth;
-        this.gender = gender;
-        this.uri = uri;
-    }
-
     public Uri getUri() {
         return uri;
     }
@@ -73,13 +72,6 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", date_of_birth='" + date_of_birth + '\'' +
-                ", gender='" + gender + '\'' +
-                ", uri=" + uri +
-                '}';
+        return "User{" + "id=" + id + ", name='" + name + '\'' + ", email='" + email + '\'' + ", date_of_birth='" + date_of_birth + '\'' + ", gender='" + gender + '\'' + ", uri=" + uri + '}';
     }
 }

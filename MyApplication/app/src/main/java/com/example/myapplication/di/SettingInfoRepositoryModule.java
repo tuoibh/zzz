@@ -1,10 +1,8 @@
 package com.example.myapplication.di;
 
 import android.content.SharedPreferences;
-
 import com.example.myapplication.data.repo.SettingInfoRepositoryImpl;
 import com.example.myapplication.domain.repo.SettingInfoRepository;
-
 import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;

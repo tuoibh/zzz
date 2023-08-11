@@ -1,5 +1,7 @@
 package com.example.myapplication.data.model.castncrew;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -99,6 +101,7 @@ public class CrewItems {
 		this.job = job;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "CrewItems{" +

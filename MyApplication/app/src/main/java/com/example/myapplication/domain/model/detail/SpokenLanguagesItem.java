@@ -29,8 +29,7 @@ public class SpokenLanguagesItem {
 		this.englishName = englishName;
 	}
 
-	public SpokenLanguagesItem() {
-	}
+	public SpokenLanguagesItem() {}
 
 	public SpokenLanguagesItem(String name, String iso6391, String englishName) {
 		this.name = name;
