@@ -45,14 +45,17 @@
 
         <TextView
             android:id="@+id/txt_release_date_text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="1881"
+            android:text="18818888888888888888888888888888888888888888888888"
             android:textSize="12sp"
             android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
             app:layout_constraintBottom_toBottomOf="@+id/txt_release_date"
             app:layout_constraintStart_toEndOf="@+id/txt_release_date"
-            app:layout_constraintTop_toTopOf="@+id/txt_release_date" />
+            app:layout_constraintTop_toTopOf="@+id/txt_release_date"
+            app:layout_constraintEnd_toStartOf="@id/imv_star_favorite"/>
 
         <TextView
             android:id="@+id/txt_rating"

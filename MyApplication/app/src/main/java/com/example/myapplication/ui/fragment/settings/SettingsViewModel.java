@@ -16,18 +16,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
-    private InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase;
-    private GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
+    private final InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase;
+
     @Inject
     public SettingsViewModel(InsertSettingsInforSharedPreferenceUseCase insertSettingsInforSharedPreferenceUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase) {
         this.insertSettingsInforSharedPreferenceUseCase = insertSettingsInforSharedPreferenceUseCase;
-        this.getSettingsInforSharedPreferenceUseCase = getSettingsInforSharedPreferenceUseCase;
     }
 
-    private MutableLiveData<Float> ldMoviePoint = new MutableLiveData<>(0f);
+    private final MutableLiveData<Float> ldMoviePoint = new MutableLiveData<>(0f);
     public LiveData<Float> mLdMoviePoint = ldMoviePoint;
 
-    private MutableLiveData<Integer> ldYear = new MutableLiveData<>(2023);
+    private final MutableLiveData<Integer> ldYear = new MutableLiveData<>(2023);
     public LiveData<Integer> mLdYear = ldYear;
     public void updateSettingMoviePoint(float point){
         ldMoviePoint.postValue(point);

@@ -46,7 +46,6 @@ public class MovieFavouriteAdapter extends RecyclerView.Adapter<MovieFavouriteAd
                         .getPosterPath())
                 .placeholder(R.drawable.ic_splash_app)
                 .into(holder.binding.imvMovieImage);
-        if(listMovie.get(position).isAdult()) holder.binding.imvAdult.setVisibility(View.VISIBLE);
         holder.binding.txtMovieName.setText(listMovie.get(position).getTitle());
         holder.binding.txtOverviewDescription.setText(listMovie.get(position).getOverview());
         holder.binding.txtReleaseDateText.setText(listMovie.get(position).getReleaseDate());

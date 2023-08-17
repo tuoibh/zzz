@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.fragment.home;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,34 +19,15 @@ import com.example.myapplication.domain.repo.ImageLoader;
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int TYPE_LINEAR_ITEM = 1;
+    private static final int TYPE_GRID_ITEM = 2;
+    private static final int TYPE_LOADING = 3;
     List<MovieResult> listMovie;
     List<MovieResult> listLocal;
     OnItemMovieClickListener listener;
     ImageLoader imageLoader;
-    private static final int TYPE_LINEAR_ITEM = 1;
-    private static final int TYPE_GRID_ITEM = 2;
-    private static final int TYPE_LOADING = 3;
     private boolean isGrid = true;
 
-
-    public void setLdListMovie(List<MovieResult> listMovie, List<MovieResult> listLocal) {
-        this.listMovie = listMovie;
-        this.listLocal = listLocal;
-        notifyDataSetChanged();
-    }
-
-    public void setItemUI(boolean isGrid) {
-        this.isGrid = isGrid;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (listMovie != null && !listMovie.isEmpty() && position == listMovie.size() - 1) {
-            return TYPE_LOADING;
-        }
-        if (isGrid) return TYPE_GRID_ITEM;
-        return TYPE_LINEAR_ITEM;
-    }
 
     public MovieAdapter(ImageLoader imageLoader,
                         List<MovieResult> listMovie,
@@ -55,6 +37,33 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         this.listener = listener;
         this.imageLoader = imageLoader;
         this.listLocal = listLocal;
+    }
+
+    public void setLdListMovie(List<MovieResult> listMovie, List<MovieResult> listLocal) {
+        this.listMovie = listMovie;
+        this.listLocal = listLocal;
+        notifyDataSetChanged();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void addLoadingItem() {
+        this.listMovie.add(null);
+        notifyItemInserted(listMovie.size()-1);
+        notifyDataSetChanged();
+        Log.d("tbh_", "addLoadingItem: MovieAdapter " + this.listMovie.size());
+    }
+
+    public void setItemUI(boolean isGrid) {
+        this.isGrid = isGrid;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (listMovie.get(position) == null) {
+            return TYPE_LOADING;
+        }
+        if (isGrid) return TYPE_GRID_ITEM;
+        return TYPE_LINEAR_ITEM;
     }
 
     @NonNull
@@ -85,7 +94,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 linearItem.binding.txtOverviewDescription.setText(listMovie.get(position).getOverview());
                 linearItem.binding.txtReleaseDateText.setText(listMovie.get(position).getReleaseDate());
                 linearItem.binding.txtRatingText.setText(listMovie.get(position).getVoteAverage() + "/10");
-                if(listMovie.get(position).isAdult()) linearItem.binding.imvAdult.setVisibility(View.VISIBLE);
+                if (listMovie.get(position).isAdult())
+                    linearItem.binding.imvAdult.setVisibility(View.VISIBLE);
                 linearItem.onClickItem(listener, position);
                 linearItem.onFavouriteItemClick(listener, position);
                 linearItem.onSetFavouriteState(listener, position);
@@ -110,17 +120,14 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return listMovie.size();
+        return this.listMovie.size();
     }
 
 
     public void removeLoadingItem() {
-        if (listMovie == null || listMovie.isEmpty()) {
-            return;
-        }
         int position = listMovie.size() - 1;
         MovieResult movieResult = listMovie.get(position);
-        if (movieResult != null) {
+        if (movieResult == null) {
             listMovie.remove(position);
             notifyItemRemoved(position);
         }
@@ -141,9 +148,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
 
         public void onFavouriteItemClick(OnItemMovieClickListener listener, int position) {
-//            binding.imvStarFavorite.setOnCheckedChangeListener((buttonView, isChecked) ->{
-//                listener.onFavouriteClick(buttonView, isChecked, position);
-//            });
             binding.imvStarFavorite.setOnClickListener(v -> listener.onFavouriteClick(binding.imvStarFavorite, position));
         }
 

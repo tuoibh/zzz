@@ -116,7 +116,6 @@ public class MainViewModel extends ViewModel {
                 });
     }
 
-
     public void searchMovie(String movieTitle){
         Thread thread = new Thread(() -> searchMovieUseCase.searchMovieLocal(movieTitle).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -134,4 +133,5 @@ public class MainViewModel extends ViewModel {
                 }));
         thread.start();
     }
+
 }

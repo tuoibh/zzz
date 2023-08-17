@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.fragment.home;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -7,7 +9,6 @@ import androidx.lifecycle.ViewModel;
 import com.example.myapplication.core.AppConfig;
 import com.example.myapplication.domain.model.movie.MovieResponse;
 import com.example.myapplication.domain.model.movie.MovieResult;
-import com.example.myapplication.domain.model.movie.SettingInfo;
 import com.example.myapplication.domain.repo.ImageLoader;
 import com.example.myapplication.domain.usecase.movielocal.DeleteMovieInLocalUseCase;
 import com.example.myapplication.domain.usecase.listmovie.GetListMoviesUseCase;
@@ -17,6 +18,7 @@ import com.example.myapplication.domain.usecase.movielocal.InsertMovieToLocalUse
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -34,6 +36,9 @@ public class HomeViewModel extends ViewModel {
     private final DeleteMovieInLocalUseCase deleteMovieInLocalUseCase;
     private final GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase;
     ImageLoader imageLoader;
+
+    private final List<MovieResult> listRemote = new ArrayList<>();
+    private List<MovieResult> listLocal;
 
     @Inject
     public HomeViewModel(GetListMoviesUseCase getListMoviesUseCase, InsertMovieToLocalUseCase insertMovieToLocalUseCase, DeleteMovieInLocalUseCase deleteMovieInLocalUseCase, GetSettingsInforSharedPreferenceUseCase getSettingsInforSharedPreferenceUseCase, ImageLoader imageLoader) {
@@ -61,8 +66,10 @@ public class HomeViewModel extends ViewModel {
 
     private final MutableLiveData<Integer> ldYear = new MutableLiveData<>();
     public LiveData<Integer> mLdYear = ldYear;
+    private final MutableLiveData<Boolean> ldIsLoadingAgain = new MutableLiveData<>(true);
+    public LiveData<Boolean> mLdIsLoadingAgain = ldIsLoadingAgain;
 
-    public void getAllMovieByTopic(String topic, float point, String sortBy, int year, int num_page) {
+    public void getAllMovieByTopic(String topic, float point, String sortBy, int year, int num_page, boolean isRefresh, boolean isLoadmore) {
         getListMoviesUseCase.getAllMoviesByTopic(topic, num_page).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<MovieResponse>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {}
@@ -76,14 +83,23 @@ public class HomeViewModel extends ViewModel {
                         listRs.add(item);
                     }
                 }
-                if (sortBy.equals(AppConfig.Companion.KEY_RELEASE_DATE)) {
+                if (sortBy != null && sortBy.equals(AppConfig.Companion.KEY_RELEASE_DATE)) {
                     Comparator<MovieResult> byReleaseDate = Comparator.comparing(MovieResult::getReleaseDate);
                     listRs.sort(byReleaseDate.reversed());
-                } else if (sortBy.equals(AppConfig.Companion.KEY_RATING)) {
+                } else if (sortBy != null && sortBy.equals(AppConfig.Companion.KEY_RATING)) {
                     Comparator<MovieResult> byRating = Comparator.comparing(MovieResult::getVoteAverage);
                     listRs.sort(byRating.reversed());
                 }
-                ldListMovieRemote.postValue(listRs);
+                //set list remote
+                if(isRefresh){
+                    listRemote.clear();
+                    listRemote.addAll(listRs);
+                } else if(isLoadmore) {
+                    listRemote.addAll(listRs);
+                } else {
+                    listRemote.addAll(listRs);
+                }
+                ldListMovieRemote.postValue(listRemote);
             }
             @Override
             public void onError(@NonNull Throwable e) {
@@ -128,21 +144,39 @@ public class HomeViewModel extends ViewModel {
 
     public void getKeyTopicSharedPreferences() {
         String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC, AppConfig.Companion.POPULAR);
-        ldFilterTopic.postValue(topicKey);
+        ldFilterTopic.setValue(topicKey);
     }
 
     public void getPointSharedPreferences() {
         float point = getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT);
-        ldFilterPoint.postValue(point);
+        ldFilterPoint.setValue(point);
     }
 
     public void getKeySortSharedPreferences() {
         String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT, "");
-        ldSortBy.postValue(keySort);
+        ldSortBy.setValue(keySort);
     }
 
     public void getYearSharedPreferences() {
         int year = getSettingsInforSharedPreferenceUseCase.getInt(AppConfig.Companion.KEY_YEAR);
-        ldYear.postValue(year);
+        ldYear.setValue(year);
+    }
+
+    public boolean isLoadingAgain(){
+        String topicKey = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_TOPIC, AppConfig.Companion.POPULAR);
+        float point = getSettingsInforSharedPreferenceUseCase.getFloat(AppConfig.Companion.KEY_POINT);
+        String keySort = getSettingsInforSharedPreferenceUseCase.getString(AppConfig.Companion.KEY_SORT, "");
+        int year = getSettingsInforSharedPreferenceUseCase.getInt(AppConfig.Companion.KEY_YEAR);
+        if( !(Objects.equals(ldFilterTopic.getValue(), topicKey)) || !(point == ldFilterPoint.getValue() ||
+                !(keySort.equals(ldSortBy.getValue())) || !(year == ldYear.getValue()))){
+            ldFilterTopic.setValue(topicKey);
+            ldFilterPoint.setValue(point);
+            ldSortBy.setValue(keySort);
+            ldYear.setValue(year);
+            ldIsLoadingAgain.setValue(true);
+            return true;
+        }
+        ldIsLoadingAgain.setValue(false);
+        return false;
     }
 }
