@@ -3,6 +3,7 @@ package com.example.myapplication.ui.fragment.home;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,7 +127,10 @@ public class HomeMoviesFragment extends Fragment {
                     lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
                     int totalItemCount = layoutManager.getItemCount();
                     if (!isLoadingMore && lastVisibleItemPosition == totalItemCount-1) {
+                        adapter.addLoadingItem();
+                        isLoadingMore = true;
                         loadMoreData();
+                        isLoadingMore = false;
                     }
                 });
             }
@@ -135,13 +139,10 @@ public class HomeMoviesFragment extends Fragment {
 
     @SuppressLint("NotifyDataSetChanged")
     private void loadMoreData() {
-        adapter.addLoadingItem();
-        isLoadingMore = true;
         activity.setCurrentLoadPage(activity.getCurrentLoadPage() + 1);
         adapter.removeLoadingItem();
         viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, activity.getCurrentLoadPage(), isRefresh, isLoadingMore);
         adapter.notifyDataSetChanged();
-        isLoadingMore = false;
     }
     private void observer(){
         viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {

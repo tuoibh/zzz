@@ -94,13 +94,21 @@ public class Reminder {
         intent.putExtra(AppConfig.Companion.NOTIFICATION_URL_POSTER_MOVIE, this.getPosterUrl());
         intent.putExtra(AppConfig.Companion.NOTIFICATION_VOTE_AVERAGE_MOVIE, this.voteAverage);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 101, intent,
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_ONE_SHOT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                 convertToTimeInMilis(this.dateReminder + " " + this.timeReminder),
                 pendingIntent);
     }
 
+    public void cancelAlarm(Context context){
+        Intent intent = new Intent(context, ReminderMovieReceiver.class);
+        intent.setAction(AppConfig.Companion.ACTION_NOTI);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 101, intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+    }
     public Long convertToTimeInMilis(String dateString) {
         long timeInMillis = 0;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());

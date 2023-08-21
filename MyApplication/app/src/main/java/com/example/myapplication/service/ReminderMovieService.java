@@ -92,7 +92,6 @@ public class ReminderMovieService extends Service {
                     .setContentTitle(intent.getStringExtra(AppConfig.Companion.NOTIFICATION_TITLE_MOVIE))
                     .setContentText(intent.getStringExtra(AppConfig.Companion.NOTIFICATION_VOTE_AVERAGE_MOVIE) +"/10")
                     .setSmallIcon(R.drawable.ic_splash_app)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.img_0))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)
                     .build();

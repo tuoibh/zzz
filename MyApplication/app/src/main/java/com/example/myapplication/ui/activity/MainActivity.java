@@ -233,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.imgMenuMain.setVisibility(View.VISIBLE);
         binding.spinnerTopic.setVisibility(View.VISIBLE);
         binding.imvGridToolbar.setVisibility(View.VISIBLE);
+        binding.imvMoreToolbar.setVisibility(View.VISIBLE);
         binding.toolbar.setVisibility(View.VISIBLE);
         binding.bottomNavigationView.setVisibility(View.VISIBLE);
     }
@@ -242,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         binding.imgBack.setVisibility(View.GONE);
         binding.spinnerTopic.setVisibility(View.GONE);
         binding.imvGridToolbar.setVisibility(View.GONE);
+        binding.imvMoreToolbar.setVisibility(View.GONE);
         binding.imgMenuMain.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setVisibility(View.VISIBLE);
         binding.txtTitleScreen.setText(title);

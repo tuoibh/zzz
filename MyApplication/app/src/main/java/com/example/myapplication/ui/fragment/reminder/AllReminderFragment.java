@@ -51,16 +51,16 @@ public class AllReminderFragment extends Fragment {
             reminderList = reminders;
             if(adapter != null) adapter.setReminderList(reminderList);
         });
-        adapter = new ReminderAdapter(reminderList, viewModel.imageLoader, (view1, position) -> showDialog(reminderList.get(position).getMovieId()));
+        adapter = new ReminderAdapter(reminderList, viewModel.imageLoader, (view1, position) -> showDialog(reminderList.get(position)));
         binding.rcvAllReminder.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
-    private void showDialog(int id) {
+    private void showDialog(Reminder reminder) {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Want to delete this reminder?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    viewModel.deleteReminder(id);
+                    viewModel.deleteReminder(requireContext(), reminder);
                     activity.getViewModel().getListReminder();
                 })
                 .setNeutralButton("Cancel", (dialog, which) -> Log.d("tbh_", "showDialog: AllReminderFragment")).show();

@@ -28,7 +28,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     ImageLoader imageLoader;
     private boolean isGrid = true;
 
-
     public MovieAdapter(ImageLoader imageLoader,
                         List<MovieResult> listMovie,
                         List<MovieResult> listLocal,
@@ -47,10 +46,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @SuppressLint("NotifyDataSetChanged")
     public void addLoadingItem() {
-        this.listMovie.add(null);
+        this.listMovie.add(listMovie.size(), null);
         notifyItemInserted(listMovie.size()-1);
         notifyDataSetChanged();
-        Log.d("tbh_", "addLoadingItem: MovieAdapter " + this.listMovie.size());
     }
 
     public void setItemUI(boolean isGrid) {
@@ -59,7 +57,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if (listMovie.get(position) == null) {
+        if (listMovie.get(position) == null || position == this.listMovie.size() -1) {
             return TYPE_LOADING;
         }
         if (isGrid) return TYPE_GRID_ITEM;
@@ -123,7 +121,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return this.listMovie.size();
     }
 
-
     public void removeLoadingItem() {
         int position = listMovie.size() - 1;
         MovieResult movieResult = listMovie.get(position);
@@ -154,7 +151,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public void onSetFavouriteState(OnItemMovieClickListener listener, int position) {
             listener.onChangeFavouriteState(binding.imvStarFavorite, position);
         }
-
     }
 
     public static class MovieHolderGridItem extends RecyclerView.ViewHolder {
@@ -171,7 +167,6 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             });
         }
     }
-
 
     public static class MovieHolderLoading extends RecyclerView.ViewHolder {
         public MovieHolderLoading(ItemLoadingBinding binding) {

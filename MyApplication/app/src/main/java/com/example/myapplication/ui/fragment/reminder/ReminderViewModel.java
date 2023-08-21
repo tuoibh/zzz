@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.fragment.reminder;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -57,8 +59,9 @@ public class ReminderViewModel extends ViewModel {
                 });
     }
 
-    public void deleteReminder(int id){
-        deleteReminderUseCase.deleteReminderById(id);
+    public void deleteReminder(Context context, Reminder reminder){
+        deleteReminderUseCase.deleteReminderById(reminder.getMovieId());
+        reminder.cancelAlarm(context);
         getListReminder();
     }
 }
