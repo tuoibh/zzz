@@ -107,8 +107,23 @@ public class HomeMoviesFragment extends Fragment {
             }
         });
         activity.getViewModel().mIsCheck.observe(requireActivity(), isGrid -> {
+            int position = 0;
             adapter.setItemUI(isGrid);
+            try {
+                if(isGrid){
+                    LinearLayoutManager layoutManager = (LinearLayoutManager) binding.rcvListMovies.getLayoutManager();
+                    assert layoutManager != null;
+                    position = Objects.requireNonNull(layoutManager).findFirstVisibleItemPosition();
+                }
+                else {
+                    GridLayoutManager layoutManager = (GridLayoutManager) binding.rcvListMovies.getLayoutManager();
+                    assert layoutManager != null;
+                    position = layoutManager.findFirstVisibleItemPosition();
+                }
+            } catch (Exception e) { e.printStackTrace(); }
             binding.rcvListMovies.setLayoutManager(isGrid ? new GridLayoutManager(requireContext(), 2) : new LinearLayoutManager(requireContext()));
+            binding.rcvListMovies.scrollToPosition(position
+            );
         });
         adapter.notifyDataSetChanged();
         binding.rcvListMovies.setItemViewCacheSize(listRemote.size());
@@ -143,7 +158,6 @@ public class HomeMoviesFragment extends Fragment {
         activity.setCurrentLoadPage(activity.getCurrentLoadPage() + 1);
         viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, activity.getCurrentLoadPage(), isRefresh, isLoadingMore);
         adapter.notifyDataSetChanged();
-//        adapter.removeLoadingItem();
         isLoadingMore = false;
     }
     private void observer(){
@@ -157,16 +171,28 @@ public class HomeMoviesFragment extends Fragment {
                 activity.setUISpinner(s);
             }
         });
-        viewModel.mLdYear.observe(requireActivity(), integer -> year = integer);
-        viewModel.mLdSortBy.observe(requireActivity(), s -> keySort = s);
-        viewModel.mLdFilterPoint.observe(requireActivity(), aFloat -> point = aFloat);
+        viewModel.mLdYear.observe(requireActivity(), integer -> {
+            if(year != integer || Boolean.TRUE.equals(viewModel.mLdIsLoadingAgain.getValue())){
+                year = integer;
+                getNewList();
+            }
+        });
+        viewModel.mLdSortBy.observe(requireActivity(), s -> {
+            if(!keySort.equals(s) || Boolean.TRUE.equals(viewModel.mLdIsLoadingAgain.getValue())){
+                keySort = s;
+                getNewList();
+            }
+        });
+        viewModel.mLdFilterPoint.observe(requireActivity(), aFloat -> {
+            if(point != aFloat || Boolean.TRUE.equals(viewModel.mLdIsLoadingAgain.getValue())){
+                point = aFloat;
+                getNewList();
+            }
+        });
         activity.getViewModel().mTopicState.observe(requireActivity(), topic -> {
             if(sharedTopic == null || !(sharedTopic == topic)||Boolean.TRUE.equals(viewModel.mLdIsLoadingAgain.getValue())){
-                activity.setCurrentLoadPage(1);
                 sharedTopic = topic;
-                getLocalInfoToGetListMovieRemote();
-                viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, activity.getCurrentLoadPage(), true, isLoadingMore);
-                binding.rcvListMovies.smoothScrollToPosition(0);
+                getNewList();
             }
         });
         viewModel.mLdListMovieRemote.observe(requireActivity(), movieResponse -> {
@@ -179,6 +205,14 @@ public class HomeMoviesFragment extends Fragment {
                 binding.txtNothing.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void getNewList() {
+        try {
+            activity.setCurrentLoadPage(1);
+            viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, activity.getCurrentLoadPage(), true, isLoadingMore);
+            binding.rcvListMovies.smoothScrollToPosition(0);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     @SuppressLint("NotifyDataSetChanged")
