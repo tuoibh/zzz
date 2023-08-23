@@ -99,6 +99,7 @@ public class HomeViewModel extends ViewModel {
                 } else {
                     listRemote.addAll(listRs);
                 }
+                listRemote.remove(null);
                 ldListMovieRemote.postValue(listRemote);
             }
             @Override

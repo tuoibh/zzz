@@ -28,6 +28,7 @@ import com.example.myapplication.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HomeMoviesFragment extends Fragment {
     private final List<MovieResult> listRemote = new ArrayList<>();
@@ -124,13 +125,13 @@ public class HomeMoviesFragment extends Fragment {
                 super.onScrolled(recyclerView, dx, dy);
                 binding.rcvListMovies.post(() -> {
                     LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                    lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                    lastVisibleItemPosition = Objects.requireNonNull(layoutManager).findLastVisibleItemPosition();
                     int totalItemCount = layoutManager.getItemCount();
                     if (!isLoadingMore && lastVisibleItemPosition == totalItemCount-1) {
                         adapter.addLoadingItem();
                         isLoadingMore = true;
+                        adapter.notifyDataSetChanged();
                         loadMoreData();
-                        isLoadingMore = false;
                     }
                 });
             }
@@ -140,9 +141,10 @@ public class HomeMoviesFragment extends Fragment {
     @SuppressLint("NotifyDataSetChanged")
     private void loadMoreData() {
         activity.setCurrentLoadPage(activity.getCurrentLoadPage() + 1);
-        adapter.removeLoadingItem();
         viewModel.getAllMovieByTopic(sharedTopic.key, point, keySort, year, activity.getCurrentLoadPage(), isRefresh, isLoadingMore);
         adapter.notifyDataSetChanged();
+//        adapter.removeLoadingItem();
+        isLoadingMore = false;
     }
     private void observer(){
         viewModel.mLdListMovieLocal.observe(requireActivity(), list -> {

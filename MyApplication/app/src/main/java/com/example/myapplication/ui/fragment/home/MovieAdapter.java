@@ -46,9 +46,11 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @SuppressLint("NotifyDataSetChanged")
     public void addLoadingItem() {
-        this.listMovie.add(listMovie.size(), null);
-        notifyItemInserted(listMovie.size()-1);
-        notifyDataSetChanged();
+        if(this.listMovie.get(listMovie.size()-1) != null){
+            this.listMovie.add(listMovie.size(), null);
+            notifyItemInserted(listMovie.size()-1);
+            notifyDataSetChanged();
+        }
     }
 
     public void setItemUI(boolean isGrid) {
@@ -57,7 +59,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if (listMovie.get(position) == null || position == this.listMovie.size() -1) {
+        if (listMovie.get(position) == null || position == this.listMovie.size()) {
             return TYPE_LOADING;
         }
         if (isGrid) return TYPE_GRID_ITEM;
@@ -118,6 +120,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
+        Log.d("tbh_", "getItemCount: MovieAdapter" + this.listMovie.size());
         return this.listMovie.size();
     }
 

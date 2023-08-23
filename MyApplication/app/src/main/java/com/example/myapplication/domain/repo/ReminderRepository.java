@@ -1,6 +1,5 @@
 package com.example.myapplication.domain.repo;
 
-
 import com.example.myapplication.domain.model.reminder.Reminder;
 
 import java.util.List;
